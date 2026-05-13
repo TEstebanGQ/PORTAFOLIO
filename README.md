@@ -5,7 +5,6 @@
 **Portafolio personal de [Tomas Esteban González Quintero](https://portafolio-tegq.netlify.app/)**  
 Full Stack Developer · Bucaramanga, Colombia
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/placeholder/deploy-status)](https://portafolio-tegq.netlify.app/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -17,12 +16,6 @@ Full Stack Developer · Bucaramanga, Colombia
 
 ---
 
-## ✦ Vista previa
-
-> Portafolio one-page de estética **neubrutalism híbrido editorial** — tipografía agresiva, paleta de alto contraste, animaciones GSAP orquestadas y cero dependencias de build.
-
----
-
 ## 🗂 Estructura del proyecto
 
 ```
@@ -30,7 +23,7 @@ Full Stack Developer · Bucaramanga, Colombia
 ├── index.html               # Markup semántico — toda la estructura del sitio
 ├── styles.css               # Diseño mobile-first, tokens CSS, componentes brutales
 ├── script.js                # Animaciones GSAP + ScrollTrigger + interacciones
-└── cv-tomas-gonzalez.pdf    # CV descargable (reemplazar con tu PDF real)
+
 ```
 
 ---
@@ -46,20 +39,6 @@ Full Stack Developer · Bucaramanga, Colombia
 | Deploy | [Netlify](https://netlify.com/) |
 
 > Sin bundlers. Sin frameworks. Sin dependencias de `node_modules` en producción.
-
----
-
-## ✨ Features
-
-- **Cursor personalizado** con efecto `mix-blend-mode: difference` y trailing ring animado
-- **Elementos magnéticos** que reaccionan al mouse (desktop)
-- **Timeline de entrada hero** con split de caracteres y animación por stagger
-- **Efecto scramble** en el título al hacer hover (caracteres aleatorios → texto original)
-- **ScrollTrigger** en secciones: headers, textos, tarjetas de stack, proyectos con parallax
-- **Marquee ticker** superior y break de tecnologías animados en CSS puro
-- **Navegación responsive** con menú hamburguesa
-- **Graceful degradation** — fallback completo si GSAP no carga desde CDN
-- **Soporte `prefers-reduced-motion`** — animaciones desactivadas para accesibilidad
 
 ---
 
@@ -111,16 +90,6 @@ git push -u origin main
 
 3. Ir a **Settings → Pages → Source: `main` / root → Save**
 4. El sitio queda en `https://TEstebanGQ.github.io`
-
----
-
-## ✅ Checklist antes de publicar
-
-- [ ] Reemplazar `cv-tomas-gonzalez.pdf` con tu CV real
-- [ ] Verificar enlace de GitHub en la sección `#contact`
-- [ ] Verificar enlace de LinkedIn (`/in/tomas-esteban-gonzalez-quintero/`)
-- [ ] Actualizar enlace de WhatsApp con número real (`https://wa.me/57XXXXXXXXXX`)
-- [ ] Revisar meta tags OG (`og:title`, `og:description`, `og:image`)
 
 ---
 
