@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tomas Esteban Gonzalez Quintero — Full Stack Developer. Portafolio editorial brutal." />
+  <meta name="author" content="Tomas Esteban Gonzalez Quintero" />
+  <meta name="theme-color" content="#FFE600" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="TEGQ // Full Stack Developer" />
+  <meta property="og:description" content="Portafolio de Tomas Esteban Gonzalez Quintero — código brutal, automatización y arquitectura limpia." />
+  <meta property="og:type" content="website" />
+
+  <title>TEGQ // FULL STACK DEVELOPER</title>
+
+  <!-- Fonts: Archivo Black (display brutal) + Space Mono (mono) + Fraunces (editorial italic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400;1,9..144,700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon brutal: bloque amarillo -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23FFE600'/%3E%3Ctext x='50' y='72' font-family='monospace' font-size='70' font-weight='900' text-anchor='middle' fill='%23000'%3ET%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- ======================= NOISE & GRAIN OVERLAY ======================= -->
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- ======================= CUSTOM CURSOR ======================= -->
+  <div class="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- ======================= MARQUEE TICKER ======================= -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>★ AVAILABLE FOR HIRE</span>
+      <span>★ FULL STACK DEVELOPER</span>
+      <span>★ BUCARAMANGA / COLOMBIA</span>
+      <span>★ EST. 2024</span>
+      <span>★ AVAILABLE FOR HIRE</span>
+      <span>★ FULL STACK DEVELOPER</span>
+      <span>★ BUCARAMANGA / COLOMBIA</span>
+      <span>★ EST. 2024</span>
+    </div>
+  </div>
+
+  <!-- ======================= NAV ======================= -->
+  <nav class="nav">
+    <a href="#top" class="nav__brand" data-magnetic>
+      <span class="nav__brand-mark">T</span>
+      <span class="nav__brand-text">EGQ.</span>
+    </a>
+    <ul class="nav__list">
+      <li><a href="#work" data-link>WORK</a></li>
+      <li><a href="#about" data-link>ABOUT</a></li>
+      <li><a href="#stack" data-link>STACK</a></li>
+      <li><a href="#contact" data-link>CONTACT</a></li>
+    </ul>
+    <button class="nav__toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ======================= HERO ======================= -->
+  <header id="top" class="hero">
+    <!-- Decorative grid -->
+    <div class="hero__grid" aria-hidden="true"></div>
+
+    <!-- Sticker labels -->
+    <div class="sticker sticker--1">
+      <span>N° 001</span>
+    </div>
+    <div class="sticker sticker--2">
+      <span>FULL ↗ STACK</span>
+    </div>
+
+    <div class="hero__inner">
+      <div class="hero__meta">
+        <span class="meta-line">[ PORTFOLIO / VOL.01 ]</span>
+        <span class="meta-line">2025 — ∞</span>
+      </div>
+
+      <h1 class="hero__title" aria-label="Tomas Esteban Gonzalez Quintero">
+        <span class="line line--1">
+          <span class="word" data-text="TOMAS">TOMAS</span>
+        </span>
+        <span class="line line--2">
+          <span class="word italic" data-text="esteban">esteban</span>
+        </span>
+        <span class="line line--3">
+          <span class="word outlined" data-text="GONZALEZ">GONZALEZ</span>
+        </span>
+        <span class="line line--4">
+          <span class="word" data-text="QUINTERO">QUINTERO</span>
+        </span>
+      </h1>
+
+      <div class="hero__bottom">
+        <div class="hero__role">
+          <div class="role-card">
+            <span class="role-card__label">CURRENT ROLE</span>
+            <span class="role-card__value">FULL_STACK<br/>DEVELOPER<span class="blink">_</span></span>
+          </div>
+        </div>
+
+        <p class="hero__intro">
+          Construyo <em>cosas digitales</em> que funcionan. Backend con criterio,
+          frontend con carácter, automatización con cabeza. Basado en
+          <strong>Bucaramanga</strong> — disponible para el mundo.
+        </p>
+
+        <div class="hero__cta">
+          <a href="#work" class="btn btn--primary" data-magnetic>
+            <span>VER TRABAJO</span>
+            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="square"/></svg>
+          </a>
+          <a href="#contact" class="btn btn--ghost" data-magnetic>CONTÁCTAME</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__scroll">
+      <span>SCROLL</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </header>
+
+  <!-- ======================= MARQUEE BREAK ======================= -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>JAVASCRIPT</span><i>✺</i>
+      <span>.NET</span><i>✺</i>
+      <span>SUPABASE</span><i>✺</i>
+      <span>REACT NATIVE</span><i>✺</i>
+      <span>N8N</span><i>✺</i>
+      <span>MYSQL</span><i>✺</i>
+      <span>NODE.JS</span><i>✺</i>
+      <span>POSTGRESQL</span><i>✺</i>
+      <span>JAVASCRIPT</span><i>✺</i>
+      <span>.NET</span><i>✺</i>
+      <span>SUPABASE</span><i>✺</i>
+      <span>REACT NATIVE</span><i>✺</i>
+      <span>N8N</span><i>✺</i>
+      <span>MYSQL</span><i>✺</i>
+      <span>NODE.JS</span><i>✺</i>
+      <span>POSTGRESQL</span><i>✺</i>
+    </div>
+  </div>
+
+  <!-- ======================= ABOUT ======================= -->
+  <section id="about" class="about">
+    <div class="section-head">
+      <span class="section-head__num">01</span>
+      <h2 class="section-head__title">SOBRE / MÍ</h2>
+      <span class="section-head__decor">— — — — —</span>
+    </div>
+
+    <div class="about__grid">
+      <div class="about__col about__col--main">
+        <p class="about__lead reveal-text">
+          Soy <strong>desarrollador full stack</strong> en formación intensa
+          desde <em>CampusLands</em>. Vengo del lado donde uno entiende la base
+          antes de subirse al framework: bases de datos relacionales hasta 4NF,
+          arquitectura hexagonal, y suficiente JavaScript crudo para no
+          depender del azúcar sintáctica.
+        </p>
+        <p class="about__body reveal-text">
+          Me obsesionan tres cosas: <span class="hl">arquitectura limpia</span>,
+          <span class="hl">automatización</span> que ahorra horas reales, y
+          <span class="hl">producto</span> que la gente realmente use. He
+          construido desde sistemas n8n complejos con clasificación AI, hasta
+          marketplaces móviles con React Native + Supabase, pasando por
+          MCP servers en Node.
+        </p>
+      </div>
+
+      <aside class="about__col about__col--side">
+        <div class="info-block info-block--pink">
+          <span class="info-block__label">UBICACIÓN</span>
+          <span class="info-block__value">BUCARAMANGA<br/>SANTANDER, CO</span>
+        </div>
+        <div class="info-block info-block--yellow">
+          <span class="info-block__label">EXPERIENCIA</span>
+          <span class="info-block__value">CAMPUSLANDS<br/>STUDENT DEV</span>
+        </div>
+        <div class="info-block info-block--cyan">
+          <span class="info-block__label">DISPONIBILIDAD</span>
+          <span class="info-block__value">OPEN TO<br/>WORK ✦</span>
+        </div>
+        <div class="info-block info-block--black">
+          <span class="info-block__label">IDIOMAS</span>
+          <span class="info-block__value">ES // NATIVE<br/>EN // B1</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ======================= WORK ======================= -->
+  <section id="work" class="work">
+    <div class="section-head">
+      <span class="section-head__num">02</span>
+      <h2 class="section-head__title">PROYECTOS / SELECCIONADOS</h2>
+      <span class="section-head__decor">— — — — —</span>
+    </div>
+
+    <div class="projects">
+      <!-- PROJECT 1 -->
+      <article class="project project--featured" data-project>
+        <div class="project__index">P/01</div>
+        <div class="project__visual project__visual--n8n">
+          <!-- Visual ilustrado del workflow n8n -->
+          <svg viewBox="0 0 500 400" class="project__svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="1.2" fill="#000"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="400" fill="#FF4FA8"/>
+            <rect width="500" height="400" fill="url(#dots)" opacity="0.15"/>
+
+            <!-- Nodes -->
+            <g class="wf-node">
+              <rect x="30" y="60" width="110" height="55" fill="#FFE600" stroke="#000" stroke-width="3"/>
+              <text x="85" y="93" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">FORM</text>
+            </g>
+            <g class="wf-node">
+              <rect x="195" y="60" width="110" height="55" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="250" y="93" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">AI / GPT</text>
+            </g>
+            <g class="wf-node">
+              <rect x="360" y="60" width="110" height="55" fill="#00E5FF" stroke="#000" stroke-width="3"/>
+              <text x="415" y="93" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">SHEETS</text>
+            </g>
+            <g class="wf-node">
+              <rect x="30" y="180" width="110" height="55" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="85" y="213" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">DRIVE</text>
+            </g>
+            <g class="wf-node">
+              <rect x="195" y="180" width="110" height="55" fill="#FFE600" stroke="#000" stroke-width="3"/>
+              <text x="250" y="207" text-anchor="middle" font-family="Space Mono" font-size="11" font-weight="700" fill="#000">MERGE</text>
+              <text x="250" y="222" text-anchor="middle" font-family="Space Mono" font-size="11" font-weight="700" fill="#000">NODE</text>
+            </g>
+            <g class="wf-node">
+              <rect x="360" y="180" width="110" height="55" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="415" y="213" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">TELEGRAM</text>
+            </g>
+            <g class="wf-node">
+              <rect x="195" y="300" width="110" height="55" fill="#000" stroke="#000" stroke-width="3"/>
+              <text x="250" y="333" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#FFE600">DONE ✓</text>
+            </g>
+
+            <!-- connectors -->
+            <g stroke="#000" stroke-width="3" fill="none" stroke-linecap="square">
+              <path d="M140 87 L195 87"/>
+              <path d="M305 87 L360 87"/>
+              <path d="M85 115 L85 180"/>
+              <path d="M415 115 L415 180"/>
+              <path d="M140 207 L195 207"/>
+              <path d="M305 207 L360 207"/>
+              <path d="M250 235 L250 300"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="project__content">
+          <div class="project__tags">
+            <span>n8n</span><span>OpenRouter</span><span>Telegram API</span><span>Google APIs</span>
+          </div>
+          <h3 class="project__title">SISTEMA / JUSTIFICACIÓN ESCOLAR</h3>
+          <p class="project__desc">
+            Workflow de automatización en n8n que orquesta un formulario público,
+            clasificación AI vía OpenRouter, archivos en Drive, Sheets como
+            base de datos, y un bot de Telegram para notificar coordinadores.
+            Solucioné CORS, deadlocks en merge nodes, y loops infinitos de cron.
+          </p>
+          <div class="project__role">ROLE → AUTOMATION ENGINEER</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 2 -->
+      <article class="project project--right" data-project>
+        <div class="project__index">P/02</div>
+        <div class="project__visual project__visual--mcp">
+          <svg viewBox="0 0 500 400" class="project__svg" xmlns="http://www.w3.org/2000/svg">
+            <rect width="500" height="400" fill="#000"/>
+            <!-- Terminal frame -->
+            <rect x="30" y="30" width="440" height="340" fill="#1a1a1a" stroke="#FFE600" stroke-width="3"/>
+            <!-- Terminal bar -->
+            <rect x="30" y="30" width="440" height="32" fill="#FFE600"/>
+            <circle cx="50" cy="46" r="6" fill="#000"/>
+            <circle cx="70" cy="46" r="6" fill="#000"/>
+            <circle cx="90" cy="46" r="6" fill="#000"/>
+            <text x="250" y="51" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">github-mcp ~ node</text>
+
+            <!-- Code lines -->
+            <g font-family="Space Mono" font-size="14" fill="#00E5FF">
+              <text x="50" y="100">$ <tspan fill="#fff">mcp connect github</tspan></text>
+              <text x="50" y="130" fill="#FF4FA8">→ groq llama-3.3 ready</text>
+              <text x="50" y="160" fill="#fff">$ <tspan fill="#FFE600">"crea un repo llamado petgo"</tspan></text>
+              <text x="50" y="190" fill="#00E5FF">→ parsing intent...</text>
+              <text x="50" y="220" fill="#00E5FF">→ calling github.createRepo()</text>
+              <text x="50" y="250" fill="#FFE600">✓ repo created</text>
+              <text x="50" y="280" fill="#fff">$ <tspan fill="#FFE600">"añade un readme"</tspan></text>
+              <text x="50" y="310" fill="#00E5FF">→ generating content...</text>
+              <text x="50" y="340" fill="#FF4FA8">▌</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="project__content">
+          <div class="project__tags">
+            <span>Node.js</span><span>MCP Protocol</span><span>Groq</span><span>LLaMA 3.3</span>
+          </div>
+          <h3 class="project__title">GITHUB / MCP SERVER</h3>
+          <p class="project__desc">
+            Servidor MCP en Node que expone la API de GitHub a un LLM (LLaMA via
+            Groq) para gestión por lenguaje natural desde CLI. Crear repos, abrir
+            issues, listar PRs — todo conversacional. Implementé el protocolo MCP
+            desde cero.
+          </p>
+          <div class="project__role">ROLE → BACKEND / SOLO BUILD</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 3 -->
+      <article class="project" data-project>
+        <div class="project__index">P/03</div>
+        <div class="project__visual project__visual--bank">
+          <svg viewBox="0 0 500 400" class="project__svg" xmlns="http://www.w3.org/2000/svg">
+            <rect width="500" height="400" fill="#00E5FF"/>
+            <!-- Banco card -->
+            <g transform="translate(60 80) rotate(-4)">
+              <rect width="280" height="170" fill="#000" stroke="#000" stroke-width="3"/>
+              <rect x="6" y="6" width="280" height="170" fill="#FFE600" stroke="#000" stroke-width="3"/>
+              <text x="20" y="40" font-family="Archivo Black" font-size="22" fill="#000">BANCO</text>
+              <text x="20" y="62" font-family="Archivo Black" font-size="22" fill="#000">ACME</text>
+              <text x="20" y="120" font-family="Space Mono" font-size="14" fill="#000">**** **** **** 7445</text>
+              <text x="20" y="155" font-family="Space Mono" font-size="11" fill="#000">T. GONZALEZ</text>
+              <text x="200" y="155" font-family="Space Mono" font-size="11" fill="#000">12/29</text>
+            </g>
+            <!-- Saldo bubble -->
+            <g transform="translate(280 230) rotate(6)">
+              <rect width="200" height="100" fill="#FF4FA8" stroke="#000" stroke-width="3"/>
+              <rect x="6" y="6" width="200" height="100" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="20" y="32" font-family="Space Mono" font-size="11" font-weight="700" fill="#000">SALDO</text>
+              <text x="20" y="70" font-family="Archivo Black" font-size="28" fill="#000">$ 1,337</text>
+              <text x="20" y="92" font-family="Space Mono" font-size="10" fill="#000">↑ +12% mes</text>
+            </g>
+            <!-- Decorative arrows -->
+            <g stroke="#000" stroke-width="3" fill="none">
+              <path d="M30 320 Q150 350 280 330" stroke-dasharray="6 4"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="project__content">
+          <div class="project__tags">
+            <span>Vanilla JS</span><span>localStorage</span><span>HTML/CSS</span><span>SPA</span>
+          </div>
+          <h3 class="project__title">BANCO / ACME</h3>
+          <p class="project__desc">
+            Aplicación bancaria multi-página construida en JavaScript puro, sin
+            frameworks. Login, transferencias, historial, persistencia con
+            localStorage/sessionStorage. Mi proyecto base para dominar JS antes
+            de saltar a librerías.
+          </p>
+          <div class="project__role">ROLE → SOLO DEV / LEARNING</div>
+        </div>
+      </article>
+
+      <!-- PROJECT 4 -->
+      <article class="project project--right" data-project>
+        <div class="project__index">P/04</div>
+        <div class="project__visual project__visual--campus">
+          <svg viewBox="0 0 500 400" class="project__svg" xmlns="http://www.w3.org/2000/svg">
+            <rect width="500" height="400" fill="#FFE600"/>
+            <!-- Kanban columns -->
+            <g>
+              <rect x="30" y="40" width="135" height="320" fill="#fff" stroke="#000" stroke-width="3"/>
+              <rect x="183" y="40" width="135" height="320" fill="#fff" stroke="#000" stroke-width="3"/>
+              <rect x="336" y="40" width="135" height="320" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="97" y="65" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">TODO</text>
+              <text x="250" y="65" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">DOING</text>
+              <text x="403" y="65" text-anchor="middle" font-family="Space Mono" font-size="13" font-weight="700" fill="#000">DONE</text>
+            </g>
+            <!-- Cards TODO -->
+            <g>
+              <rect x="42" y="85" width="111" height="55" fill="#FF4FA8" stroke="#000" stroke-width="3"/>
+              <text x="52" y="105" font-family="Space Mono" font-size="10" font-weight="700" fill="#000">DEPLOY</text>
+              <text x="52" y="120" font-family="Space Mono" font-size="9" fill="#000">infra setup</text>
+              <text x="52" y="132" font-family="Space Mono" font-size="9" fill="#000">3 days</text>
+
+              <rect x="42" y="155" width="111" height="55" fill="#00E5FF" stroke="#000" stroke-width="3"/>
+              <text x="52" y="175" font-family="Space Mono" font-size="10" font-weight="700" fill="#000">SCHEMA</text>
+              <text x="52" y="190" font-family="Space Mono" font-size="9" fill="#000">db design</text>
+              <text x="52" y="202" font-family="Space Mono" font-size="9" fill="#000">2 days</text>
+            </g>
+            <!-- Cards DOING -->
+            <g>
+              <rect x="195" y="85" width="111" height="55" fill="#FFE600" stroke="#000" stroke-width="3"/>
+              <text x="205" y="105" font-family="Space Mono" font-size="10" font-weight="700" fill="#000">AUTH</text>
+              <text x="205" y="120" font-family="Space Mono" font-size="9" fill="#000">jwt + refresh</text>
+              <text x="205" y="132" font-family="Space Mono" font-size="9" fill="#000">in progress</text>
+
+              <rect x="195" y="155" width="111" height="55" fill="#fff" stroke="#000" stroke-width="3"/>
+              <text x="205" y="175" font-family="Space Mono" font-size="10" font-weight="700" fill="#000">API</text>
+              <text x="205" y="190" font-family="Space Mono" font-size="9" fill="#000">crud users</text>
+              <text x="205" y="202" font-family="Space Mono" font-size="9" fill="#000">in progress</text>
+            </g>
+            <!-- Cards DONE -->
+            <g>
+              <rect x="348" y="85" width="111" height="55" fill="#000" stroke="#000" stroke-width="3"/>
+              <text x="358" y="105" font-family="Space Mono" font-size="10" font-weight="700" fill="#FFE600">SETUP ✓</text>
+              <text x="358" y="120" font-family="Space Mono" font-size="9" fill="#fff">repo + ci</text>
+              <text x="358" y="132" font-family="Space Mono" font-size="9" fill="#fff">done</text>
+
+              <rect x="348" y="155" width="111" height="55" fill="#000" stroke="#000" stroke-width="3"/>
+              <text x="358" y="175" font-family="Space Mono" font-size="10" font-weight="700" fill="#FFE600">DESIGN ✓</text>
+              <text x="358" y="190" font-family="Space Mono" font-size="9" fill="#fff">figma flows</text>
+              <text x="358" y="202" font-family="Space Mono" font-size="9" fill="#fff">done</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="project__content">
+          <div class="project__tags">
+            <span>Vanilla JS</span><span>Modular</span><span>localStorage</span><span>Gantt</span>
+          </div>
+          <h3 class="project__title">CAMPUS / BUILD</h3>
+          <p class="project__desc">
+            Web app de gestión de proyectos en JS modular: proyectos, actividades,
+            milestones, recursos. Event delegation, persistencia local,
+            backup/export, vista responsive y utilidades de fechas estilo Gantt.
+            Arquitectura separada por capas.
+          </p>
+          <div class="project__role">ROLE → SOLO DEV / ARCHITECT</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================= STACK ======================= -->
+  <section id="stack" class="stack">
+    <div class="section-head">
+      <span class="section-head__num">03</span>
+      <h2 class="section-head__title">STACK / TÉCNICO</h2>
+      <span class="section-head__decor">— — — — —</span>
+    </div>
+
+    <div class="stack__grid">
+      <div class="stack-card stack-card--lang">
+        <span class="stack-card__head">/ LANGUAGES</span>
+        <ul>
+          <li>JavaScript</li>
+          <li>C# / .NET 8</li>
+          <li>SQL</li>
+          <li>HTML & CSS</li>
+        </ul>
+      </div>
+      <div class="stack-card stack-card--front">
+        <span class="stack-card__head">/ FRONTEND</span>
+        <ul>
+          <li>React Native</li>
+          <li>Expo</li>
+          <li>Vanilla JS</li>
+          <li>Responsive UI</li>
+        </ul>
+      </div>
+      <div class="stack-card stack-card--back">
+        <span class="stack-card__head">/ BACKEND</span>
+        <ul>
+          <li>Node.js</li>
+          <li>.NET / Hexagonal</li>
+          <li>Supabase</li>
+          <li>EF Core</li>
+        </ul>
+      </div>
+      <div class="stack-card stack-card--data">
+        <span class="stack-card__head">/ DATA</span>
+        <ul>
+          <li>PostgreSQL</li>
+          <li>MySQL</li>
+          <li>Diseño 4NF</li>
+          <li>Triggers / SP</li>
+        </ul>
+      </div>
+      <div class="stack-card stack-card--auto">
+        <span class="stack-card__head">/ AUTOMATION</span>
+        <ul>
+          <li>n8n self-hosted</li>
+          <li>OpenRouter / AI</li>
+          <li>Telegram Bots</li>
+          <li>Google APIs</li>
+        </ul>
+      </div>
+      <div class="stack-card stack-card--ops">
+        <span class="stack-card__head">/ OPS / TOOLS</span>
+        <ul>
+          <li>Git & GitHub</li>
+          <li>Docker</li>
+          <li>Arch Linux</li>
+          <li>Scrum</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= CONTACT ======================= -->
+  <section id="contact" class="contact">
+    <div class="section-head">
+      <span class="section-head__num">04</span>
+      <h2 class="section-head__title">CONTACTO / REDES</h2>
+      <span class="section-head__decor">— — — — —</span>
+    </div>
+
+    <div class="contact__hero">
+      <p class="contact__line">¿TIENES UN PROYECTO?</p>
+      <p class="contact__line contact__line--em">
+        <em>HABLEMOS</em>
+        <span class="arrow-big">↘</span>
+      </p>
+    </div>
+
+    <div class="contact__grid">
+      <a class="contact-card" href="mailto:tomasestebangonzalezquintero@gmail.com" data-magnetic>
+        <span class="contact-card__num">→ 01</span>
+        <span class="contact-card__label">EMAIL</span>
+        <span class="contact-card__value">tomasestebangonzalezquintero<br/>@gmail.com</span>
+        <span class="contact-card__cta">ENVIAR ↗</span>
+      </a>
+
+      <a class="contact-card contact-card--alt" href="https://github.com/TEstebanGQ" target="_blank" rel="noopener" data-magnetic>
+        <span class="contact-card__num">→ 02</span>
+        <span class="contact-card__label">GITHUB</span>
+        <span class="contact-card__value">TEstebanGQ</span>
+        <span class="contact-card__cta">VER REPOS ↗</span>
+      </a>
+
+      <a class="contact-card" href="https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/" target="_blank" rel="noopener" data-magnetic>
+        <span class="contact-card__num">→ 03</span>
+        <span class="contact-card__label">LINKEDIN</span>
+        <span class="contact-card__value">TOMAS E. GONZALEZ Q.</span>
+        <span class="contact-card__cta">CONECTAR ↗</span>
+      </a>
+
+
+    </div>
+  </section>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="footer">
+    <div class="footer__big" aria-hidden="true">
+      <span data-text="GRACIAS">GRACIAS</span>
+    </div>
+
+    <div class="footer__meta">
+      <div class="footer__col">
+        <span class="footer__label">© 2025</span>
+        <span class="footer__value">TOMAS E. GONZALEZ Q.</span>
+      </div>
+      <div class="footer__col">
+        <span class="footer__label">DESIGNED + CODED</span>
+        <span class="footer__value">FROM SCRATCH ✺</span>
+      </div>
+      <div class="footer__col">
+        <span class="footer__label">LAST UPDATE</span>
+        <span class="footer__value" id="lastUpdate">—</span>
+      </div>
+      <div class="footer__col">
+        <span class="footer__label">STATUS</span>
+        <span class="footer__value">
+          <span class="status-dot"></span> AVAILABLE
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
