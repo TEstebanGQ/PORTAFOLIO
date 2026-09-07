@@ -125,8 +125,12 @@ npm run preview
 ---
 
 <div align="center">
-
-*Construido con pasión por la ingeniería y el detalle técnico.*  
-**Tomás Esteban González Quintero · TEGQ · 2025–2026**
-
+  <br/>
+  <img src="https://raw.githubusercontent.com/TEstebanGQ/TEstebanGQ/main/assets/logo-tegq.jpg" width="100" alt="TEGQ Brand Logo" />
+  <br/>
+  <sub><b>© Tomas Esteban González Quintero — TEGQ</b></sub>
+  <br/><br/>
+  <em>Construido con pasión por la ingeniería y el detalle técnico.</em><br/>
+  <strong>Tomás Esteban González Quintero · TEGQ · 2025–2026</strong>
 </div>
+
