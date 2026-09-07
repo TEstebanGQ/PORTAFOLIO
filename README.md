@@ -1,18 +1,29 @@
 <div align="center">
 
-# ⬛ TEGQ // PORTFOLIO
+# 📖 El Libro de Tomás Esteban
 
-**Portafolio personal de [Tomas Esteban González Quintero](https://portafolio-tegq.netlify.app/)**  
-Full Stack Developer · Bucaramanga, Colombia
+**Portafolio interactivo 3D de [Tomás Esteban González Quintero](https://github.com/TEstebanGQ)**  
+Full Stack Developer · AI Solutions Integrator · Arquitecto de Software  
+📍 Bucaramanga, Santander, Colombia
 
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat&logo=three.js&logoColor=white)](https://threejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=flat&logo=greensock&logoColor=black)](https://greensock.com/gsap/)
 
-🌐 **[portafolio-tegq.netlify.app](https://portafolio-tegq.netlify.app/)**
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white)](https://wa.me/573167755887)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/)
+[![Email](https://img.shields.io/badge/Email-EA4335?style=flat&logo=gmail&logoColor=white)](mailto:tomasestebangonzalezquintero@gmail.com)
 
 </div>
+
+---
+
+## 🌟 ¿Qué es este portafolio?
+
+Una **bitácora técnica en 3D interactiva** que adapta el motor de físicas de páginas de [the-book-of-qbject](https://github.com/Qbject/the-book-of-qbject) con mi información, proyectos, habilidades y contacto. Las páginas se doblan orgánicamente con shaders GLSL procedimentales, exactamente como papel real.
+
+> **Tecnología:** Three.js · TypeScript · Vite · GLSL Shaders · GSAP · Web Audio API
 
 ---
 
@@ -20,104 +31,102 @@ Full Stack Developer · Bucaramanga, Colombia
 
 ```
 .
-├── index.html               # Markup semántico — toda la estructura del sitio
-├── styles.css               # Diseño mobile-first, tokens CSS, componentes brutales
-├── script.js                # Animaciones GSAP + ScrollTrigger + interacciones
-
+├── public/
+│   ├── img/
+│   │   ├── pages/          # Texturas de alta resolución de cada página (JPG, ~1528×2160)
+│   │   │   ├── cover-front.jpg   # Portada personalizada con logo TG dorado
+│   │   │   ├── who-am-i.jpg      # Perfil, bio, iconos de contacto (GitHub, WhatsApp, LinkedIn)
+│   │   │   ├── my-story.jpg      # Historia de formación en Campuslands
+│   │   │   ├── skills.jpg        # Mandala de tecnologías (Three.js + zoomable)
+│   │   │   └── ...               # Proyectos, trayectoria, intereses, contraportada
+│   │   ├── desk.jpg              # Textura del escritorio (escena WebGL)
+│   │   └── logo.png              # Logo TG para pantalla de carga
+│   └── video/                    # Videos de demo de proyectos
+├── src/
+│   ├── main.ts           # Punto de entrada: URLs de texturas y áreas interactivas
+│   ├── flipbook.ts       # Motor principal del libro 3D (Three.js + GLSL)
+│   ├── page.ts           # Geometría y curvatura procedimental de páginas
+│   ├── page-curve-helper.ts  # Cálculo de curvas de doblado
+│   ├── swipe-handler.ts  # Gestos táctiles y de ratón
+│   └── style.css         # Estilos de pantalla de carga y overlay
+├── assets/
+│   ├── logo_gold.png     # Monograma TG en dorado (portada 3D)
+│   ├── logo_clean.png    # Monograma TG en negro (páginas interiores)
+│   └── logo_white.png    # Monograma TG en blanco (preloader)
+├── index.html            # HTML base con metadata SEO personalizada
+├── vite.config.js        # Configuración de Vite
+└── tsconfig.json         # Configuración TypeScript
 ```
 
 ---
 
-## ⚙️ Stack técnico
-
-| Capa | Tecnología |
-|------|------------|
-| Markup | HTML5 semántico |
-| Estilos | CSS3 vanilla — mobile-first, custom properties, sin preprocessadores |
-| Animaciones | [GSAP 3.12](https://gsap.com/) + ScrollTrigger (CDN) |
-| Fuentes | Archivo Black · Space Mono · Fraunces — vía Google Fonts |
-| Deploy | [Netlify](https://netlify.com/) |
-
-> Sin bundlers. Sin frameworks. Sin dependencias de `node_modules` en producción.
-
----
-
-## 🚀 Correr localmente
-
-No requiere instalación. Cualquier servidor estático sirve:
+## 🚀 Instalación y uso local
 
 ```bash
-# Python (sin instalar nada)
-python3 -m http.server 8080
-# → http://localhost:8080
+# Clonar el repositorio
+git clone https://github.com/TEstebanGQ/PORTAFOLIO.git
+cd PORTAFOLIO
 
-# Node.js con npx
-npx serve .
-# → http://localhost:3000
+# Instalar dependencias
+npm install
 
-# O simplemente abrir index.html en el navegador
-# (algunas fuentes pueden fallar por CORS sin servidor)
+# Servidor de desarrollo con hot-reload
+npm run dev
+
+# Build de producción
+npm run build
+
+# Previsualizar el build de producción
+npm run preview
 ```
 
----
-
-## 📦 Deploy en Netlify
-
-El sitio está desplegado en **[portafolio-tegq.netlify.app](https://portafolio-tegq.netlify.app/)** vía Netlify con deploy continuo desde el repositorio.
-
-Para tu propio deploy:
-
-1. Conecta tu repo en [netlify.com](https://netlify.com/)
-2. Build command: *(vacío — no hay build)*
-3. Publish directory: `.` (raíz)
-4. ¡Listo!
+> **Requisito:** Node.js 18+
 
 ---
 
-## 📄 Deploy alternativo en GitHub Pages
+## 📚 Páginas del libro
 
-```bash
-# 1. Inicializar repo
-git init
-git add .
-git commit -m "feat: portfolio inicial"
-
-# 2. Conectar con GitHub
-git branch -M main
-git remote add origin https://github.com/TEstebanGQ/TEstebanGQ.github.io.git
-git push -u origin main
-```
-
-3. Ir a **Settings → Pages → Source: `main` / root → Save**
-4. El sitio queda en `https://TEstebanGQ.github.io`
+| # | Página | Contenido |
+|---|--------|-----------|
+| 0 | Portada | Monograma TG dorado · "El Libro de Tomás Esteban" |
+| 1 | Bienvenido | Instrucciones de interacción (deslizar, pantalla completa) |
+| 2–3 | Sobre Mí / Quién Soy | Bio, matriz de habilidades, contactos interactivos |
+| 4–5 | Mi Historia / Habilidades | Trayectoria en Campuslands · Mandala de tecnologías |
+| 6–7 | Intereses / Trayectoria | Áreas de interés · Capítulo de carrera |
+| 8–17 | Proyectos | Fichas de cada proyecto con videos demostrativos |
+| 30 | El Libro | Descripción del portafolio en sí mismo |
+| 31 | Contraportada | Datos de contacto y cierre |
 
 ---
 
-## 🧩 Secciones del sitio
+## 🔗 Proyectos destacados
 
-| # | Sección | Contenido |
-|---|---------|-----------|
-| — | Hero | Nombre, rol, CTA, stickers animados |
-| 01 | Sobre mí | Bio, stack filosófico, info-blocks |
-| 02 | Proyectos | 4 proyectos seleccionados con SVG ilustrado |
-| 03 | Stack técnico | 6 tarjetas por categoría |
-| 04 | Contacto | Email · GitHub · LinkedIn |
+| Proyecto | Descripción | Stack |
+|----------|-------------|-------|
+| 🧠 [campuslands-inteligente](https://github.com/TEstebanGQ/campuslands-inteligente) | Plataforma multi-agente con LangGraph, PyTorch y FastAPI | `Python` `LangGraph` `PyTorch` |
+| 📦 [logitrack-wms-springboot](https://github.com/TEstebanGQ/logitrack-wms-springboot) | Sistema WMS empresarial con Spring Boot y JPA | `Java 17` `Spring Boot` `MySQL` |
+| ⚙️ [n8n-attendance-ai-workflow](https://github.com/TEstebanGQ/n8n-attendance-ai-workflow) | Automatización de inasistencias con n8n + LLM | `n8n` `OpenRouter` `Telegram` |
+| 🔌 [github-mcp-server](https://github.com/TEstebanGQ/github-mcp-server) | Servidor MCP en Node.js para conectar LLMs con GitHub | `Node.js` `MCP Protocol` `Groq` |
+| 🎫 [HelpDeskAI](https://github.com/TEstebanGQ/HelpDeskAI) | Sistema de tickets asistido por IA y base de conocimientos | `JavaScript` `OpenRouter` `RAG` |
+| 🗄️ [ecommerce-database-4nf](https://github.com/TEstebanGQ/ecommerce-database-4nf) | Base de datos relacional en 4NF con triggers y análisis RFM | `MySQL` `4NF` `Stored Procedures` |
+| 🕹️ [softskills-quest](https://github.com/TEstebanGQ/softskills-quest) | Videojuego 2D gamificado con Canvas y Web Audio API | `JavaScript` `Canvas 2D` |
 
 ---
 
-## 📬 Contacto
+## 📬 Contacto directo
 
-| Canal | Link |
-|-------|------|
-| 🌐 Portfolio | [portafolio-tegq.netlify.app](https://portafolio-tegq.netlify.app/) |
-| 📧 Email | tomasestebangonzalezquintero@gmail.com |
+| Canal | Enlace |
+|-------|--------|
+| 💬 WhatsApp | [+57 316 775 5887](https://wa.me/573167755887?text=Hola%20Tom%C3%A1s,%20te%20contacto%20desde%20tu%20portafolio) |
+| ✉️ Email | [tomasestebangonzalezquintero@gmail.com](mailto:tomasestebangonzalezquintero@gmail.com) |
+| 💼 LinkedIn | [tomas-esteban-gonzalez-quintero](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/) |
 | 🐙 GitHub | [@TEstebanGQ](https://github.com/TEstebanGQ) |
-| 💼 LinkedIn | [Tomas E. González Q.](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/) |
 
 ---
 
 <div align="center">
 
-**Diseñado y codificado desde cero — Bucaramanga, Colombia ✺**
+*Construido con pasión por la ingeniería y el detalle técnico.*  
+**Tomás Esteban González Quintero · TEGQ · 2025–2026**
 
 </div>
