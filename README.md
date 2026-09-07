@@ -113,6 +113,12 @@ npm run preview
 
 ---
 
+## 👨‍💻 Autor
+
+**Tomas Esteban Gonzalez Quintero** — *Desarrollador Full Stack*
+
+---
+
 ## 📬 Contacto directo
 
 | Canal | Enlace |
