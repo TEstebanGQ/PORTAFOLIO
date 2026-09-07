@@ -120,22 +120,53 @@ export default class Flipbook {
 		);
 		this.introOverlay.onProgress(this.scriptProgressWeight);
 
+		let introStarted = false;
+		const startIntroOnce = () => {
+			if (
+				introStarted ||
+				this.introPhase === "COMPLETED" ||
+				this.introPhase === "ANIMATING"
+			) {
+				return;
+			}
+			introStarted = true;
+			this.introOverlay.onProgress(1);
+			this.playIntro();
+		};
+
 		THREE.DefaultLoadingManager.onProgress = (
 			_,
 			itemsLoaded,
 			itemsTotal,
 		) => {
-			if (this.introPhase === "COMPLETED") return;
+			if (introStarted || this.introPhase === "COMPLETED") return;
 
-			const assetsProgress = itemsLoaded / itemsTotal;
+			const assetsProgress = itemsTotal > 0 ? itemsLoaded / itemsTotal : 1;
 			const overallProgress =
 				this.scriptProgressWeight +
 				assetsProgress * (1 - this.scriptProgressWeight);
 			this.introOverlay.onProgress(overallProgress);
-			if (overallProgress === 1) {
-				this.playIntro();
+			if (assetsProgress >= 1 || itemsLoaded >= itemsTotal) {
+				startIntroOnce();
 			}
 		};
+
+		THREE.DefaultLoadingManager.onLoad = () => {
+			startIntroOnce();
+		};
+
+		THREE.DefaultLoadingManager.onError = (url) => {
+			console.warn("Could not load asset:", url);
+			// Do not block intro progression if an individual asset fails
+		};
+
+		// Safety timeout: If loading takes longer than 5 seconds, launch intro anyway
+		setTimeout(() => {
+			if (!introStarted) {
+				console.warn("Loading timeout reached; starting intro");
+				startIntroOnce();
+			}
+		}, 5000);
 
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(

@@ -7,7 +7,7 @@ declare global {
 	}
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
 	const containerEl = document.getElementById("flipbook-container");
 
 	const pageWidth = 764;
@@ -17,8 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		return;
 	}
 
-	const baseUrl = "";
-	const _url = (path: string) => baseUrl + path;
+	const baseUrl = import.meta.env.BASE_URL || "";
+	const _url = (path: string) => {
+		if (baseUrl.endsWith("/") && path.startsWith("/")) {
+			return baseUrl + path.slice(1);
+		}
+		return baseUrl + path;
+	};
 
 	window.flipbook = new Flipbook({
 		containerEl,
@@ -336,4 +341,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			},
 		],
 	});
-});
+}
+
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", init);
+} else {
+	init();
+}
