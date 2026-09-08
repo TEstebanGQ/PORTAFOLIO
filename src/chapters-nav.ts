@@ -165,7 +165,17 @@ export class ChaptersNav {
 
 		this.containerEl.appendChild(this.toggleBtn);
 		this.containerEl.appendChild(this.navEl);
-		document.body.appendChild(this.containerEl);
+
+		// Prevent double-clicks inside the chapters widget from triggering fullscreen toggle
+		this.containerEl.addEventListener("dblclick", e => {
+			e.stopPropagation();
+		});
+
+		const mountTarget =
+			this.flipbook.getContainerEl() ||
+			document.getElementById("flipbook-container") ||
+			document.body;
+		mountTarget.appendChild(this.containerEl);
 	}
 
 	private showNav() {

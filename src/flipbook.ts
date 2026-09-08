@@ -1375,6 +1375,10 @@ export default class Flipbook {
 		return this.progress.getValue();
 	}
 
+	public getContainerEl(): HTMLElement {
+		return this.containerEl;
+	}
+
 	public async goToPage(targetProgress: number): Promise<void> {
 		if (this.introPhase === "LOADING") return;
 
