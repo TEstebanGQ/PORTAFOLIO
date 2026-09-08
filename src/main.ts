@@ -1,5 +1,6 @@
 import "./style.css";
 import Flipbook from "./flipbook";
+import initChaptersNav from "./chapters-nav";
 
 declare global {
 	interface Window {
@@ -281,6 +282,8 @@ function init() {
 			},
 		],
 	});
+
+	initChaptersNav(window.flipbook);
 }
 
 if (document.readyState === "loading") {

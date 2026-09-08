@@ -94,6 +94,9 @@ export default class Flipbook {
 	private scriptProgressWeight = 0.4;
 
 	private introPhase: "LOADING" | "ANIMATING" | "COMPLETED" = "LOADING";
+	private pageTurnTween: gsap.core.Tween | null = null;
+	private onIntroCompleteCallbacks: (() => void)[] = [];
+	private onProgressChangeCallbacks: ((progress: number) => void)[] = [];
 
 	constructor(params: FlipBookParams) {
 		this.containerEl = params.containerEl;
@@ -176,12 +179,14 @@ export default class Flipbook {
 			9000,
 		);
 
-		this.renderer = new THREE.WebGLRenderer();
-		// this.renderer = new THREE.WebGLRenderer({ antialias: true });
+		this.renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			powerPreference: "high-performance",
+		});
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 		// this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		// this.renderer.toneMappingExposure = 1.2;
-		this.renderer.setPixelRatio(window.devicePixelRatio);
+		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.renderer.shadowMap.enabled = true;
 		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -197,6 +202,8 @@ export default class Flipbook {
 
 		this.raycaster = new THREE.Raycaster();
 		this.sceneMousePos = new THREE.Vector2();
+
+		const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
 
 		// add pages
 		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
@@ -231,6 +238,7 @@ export default class Flipbook {
 				isFrontCover: i === 0,
 				edgeColor: this.pageEdgeColor,
 				textureLoader: this.textureLoader,
+				maxAnisotropy,
 			});
 			this.pages.push(page);
 		}
@@ -259,6 +267,10 @@ export default class Flipbook {
 		const _texture = (url: string) => {
 			const texture = this.textureLoader.load(url);
 			texture.colorSpace = THREE.SRGBColorSpace;
+			texture.generateMipmaps = true;
+			texture.minFilter = THREE.LinearMipmapLinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+			texture.anisotropy = maxAnisotropy;
 			return { map: texture };
 		};
 
@@ -321,6 +333,10 @@ export default class Flipbook {
 		const deskGeometry = new THREE.PlaneGeometry(5216, 1956, 1, 1);
 		const deskTexture = this.textureLoader.load(this.textureUrls.desk);
 		deskTexture.colorSpace = THREE.SRGBColorSpace;
+		deskTexture.generateMipmaps = true;
+		deskTexture.minFilter = THREE.LinearMipmapLinearFilter;
+		deskTexture.magFilter = THREE.LinearFilter;
+		deskTexture.anisotropy = maxAnisotropy;
 		const deskMaterial = new THREE.MeshStandardMaterial({
 			map: deskTexture,
 		});
@@ -410,6 +426,10 @@ export default class Flipbook {
 		this.swipeHandler = new SwipeHandler(this.renderer.domElement);
 		this.swipeHandler.addCallback("swipeStart", () => {
 			if (this.focusedActiveArea || this.isChangingFocus) return;
+			if (this.pageTurnTween) {
+				this.pageTurnTween.kill();
+				this.pageTurnTween = null;
+			}
 			// continuing dropped turn or shift
 			// TODO: refactor; make it more comprehendable
 			this.isTurning() && this.progress.lock();
@@ -481,6 +501,7 @@ export default class Flipbook {
 		this.progress.addCallback(
 			"valueChange",
 			({ newValue: progress }: ValueChangeEvent) => {
+				this.onProgressChangeCallbacks.forEach(cb => cb(progress));
 				if (this.isVerticalMode) {
 					if (this.isTurning()) {
 						const tp = progress - this.getTurningPage()!;
@@ -1335,5 +1356,73 @@ export default class Flipbook {
 		this.introOverlay.dom.container.style.display = "none";
 		this.updateCursor();
 		this.introPhase = "COMPLETED";
+		this.onIntroCompleteCallbacks.forEach(cb => cb());
+	}
+
+	public onIntroCompleted(callback: () => void): void {
+		if (this.introPhase === "COMPLETED") {
+			callback();
+		} else {
+			this.onIntroCompleteCallbacks.push(callback);
+		}
+	}
+
+	public onProgressChange(callback: (progress: number) => void): void {
+		this.onProgressChangeCallbacks.push(callback);
+	}
+
+	public getProgress(): number {
+		return this.progress.getValue();
+	}
+
+	public async goToPage(targetProgress: number): Promise<void> {
+		if (this.introPhase === "LOADING") return;
+
+		if (this.introPhase === "ANIMATING") {
+			this.introOverlay.dom.container.style.display = "none";
+			this.updateCursor();
+			this.introPhase = "COMPLETED";
+			this.onIntroCompleteCallbacks.forEach(cb => cb());
+		}
+
+		if (this.focusedActiveArea) {
+			await this.unfocusActiveArea();
+		}
+
+		if (this.pageTurnTween) {
+			this.pageTurnTween.kill();
+			this.pageTurnTween = null;
+		}
+
+		const start = this.progress.getValue();
+		if (Math.abs(targetProgress - start) < 0.05) return;
+
+		this.progress.lock();
+		this.progress.setMin(-Infinity);
+		this.progress.setMax(Infinity);
+
+		const distance = Math.abs(targetProgress - start);
+		// Dynamic duration: snappy yet graceful flipping through pages
+		const duration = Math.min(Math.max(distance * 0.28, 0.7), 2.2);
+
+		const animation = { progress: start };
+		return new Promise<void>(resolve => {
+			this.pageTurnTween = gsap.to(animation, {
+				progress: targetProgress,
+				duration,
+				ease: "power2.inOut",
+				onUpdate: () => {
+					this.progress.setValue(animation.progress);
+				},
+				onComplete: () => {
+					this.progress.setValue(targetProgress);
+					this.progress.setMin(targetProgress);
+					this.progress.setMax(targetProgress);
+					this.progress.release();
+					this.pageTurnTween = null;
+					resolve();
+				},
+			});
+		});
 	}
 }

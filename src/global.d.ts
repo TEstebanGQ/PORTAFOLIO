@@ -63,6 +63,7 @@ type PageParams = {
 	isCover?: boolean;
 	textureLoader: THREE.TextureLoader;
 	isFrontCover: boolean;
+	maxAnisotropy?: number;
 };
 
 type PageControlPointParams = {
