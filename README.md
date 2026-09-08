@@ -86,16 +86,18 @@ npm run preview
 
 ## 📚 Páginas del libro
 
-| # | Página | Contenido |
-|---|--------|-----------|
-| 0 | Portada | Monograma TG dorado · "El Libro de Tomás Esteban" |
+| # | Página / Capítulo | Contenido |
+|---|-------------------|-----------|
+| 0 | Portada | Monograma TEGQ dorado · "El Libro de Tomás Esteban" |
 | 1 | Bienvenido | Instrucciones de interacción (deslizar, pantalla completa) |
-| 2–3 | Sobre Mí / Quién Soy | Bio, matriz de habilidades, contactos interactivos |
-| 4–5 | Mi Historia / Habilidades | Trayectoria en Campuslands · Mandala de tecnologías |
-| 6–7 | Intereses / Trayectoria | Áreas de interés · Capítulo de carrera |
-| 8–17 | Proyectos | Fichas de cada proyecto con videos demostrativos |
-| 30 | El Libro | Descripción del portafolio en sí mismo |
-| 31 | Contraportada | Datos de contacto y cierre |
+| 2–3 | Capítulo I: Sobre Mí / Quién Soy | Bio, matriz de habilidades, enlaces interactivos |
+| 4–5 | Mi Historia / Habilidades | Trayectoria y evolución técnica · Mandala de tecnologías |
+| 6–7 | Intereses / Blanco | Ciberseguridad, Animación 3D y Análisis de Datos |
+| 8–11 | Capítulo II: Trayectoria | Mapa de ruta cronológico y evolución de aprendizaje |
+| 12–17 | Capítulo III: Experiencia | Campuslands (alto rendimiento, LogiTrack WMS, IA) y Consultoría & Freelance |
+| 18–29 | Capítulo IV: Proyectos | Fichas interactivas de proyectos con videos demostrativos |
+| 30 | El Libro | Descripción y créditos del portafolio 3D |
+| 31 | Contraportada | Archivo TEGQ y canales directos de contacto |
 
 ---
 
