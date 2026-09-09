@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://book.qbject.dev/sitemap.xml
+Sitemap: https://portafolio-tegq-web.netlify.app/sitemap.xml
