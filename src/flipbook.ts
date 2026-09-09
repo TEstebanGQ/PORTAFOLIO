@@ -11,7 +11,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "stats.js";
 import Page from "./page";
 import * as dat from "dat.gui";
-import VideoOverlay from "./video-overlay";
 import SlidingNumber, { ValueChangeEvent } from "./sliding-number";
 import SwipeHandler from "./swipe-handler";
 import IntroOverlay from "./intro-overlay";
@@ -79,7 +78,6 @@ export default class Flipbook {
 	private spotShadowHelper: THREE.CameraHelper | null = null;
 	private textureLoader: THREE.TextureLoader;
 	private initCompleted: boolean = false;
-	private videoOverlay: VideoOverlay;
 	private introOverlay: IntroOverlay;
 
 	private focusedActiveArea: PageActiveArea | null = null;
@@ -88,6 +86,7 @@ export default class Flipbook {
 	private CAMERA_SIDE_GRAVITY = 4;
 	private cameraSideShift = new SlidingNumber(1, 0.2);
 	private isVerticalMode = false;
+	private isMobile = false;
 	private swipeHandler: SwipeHandler;
 
 	// if this code is running, means the scripts are already loaded
@@ -111,12 +110,11 @@ export default class Flipbook {
 		this.pageEdgeColor = params.pageEdgeColor;
 		this.pageActiveAreas = params.pageActiveAreas || [];
 
-		this.videoOverlay = new VideoOverlay(this.containerEl, () => {
-			this.unfocusActiveArea();
-		});
-		this.pageActiveAreas.forEach(area =>
-			this.videoOverlay.addVideo(area?.video),
-		);
+
+		this.isMobile =
+			/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+				navigator.userAgent,
+			) || window.innerWidth <= 768;
 
 		this.introOverlay = new IntroOverlay(
 			this.containerEl.querySelector(".intro-overlay")!,
@@ -136,6 +134,13 @@ export default class Flipbook {
 			this.introOverlay.onProgress(1);
 			this.playIntro();
 		};
+
+		const skipIntro = () => {
+			if (this.introPhase !== "COMPLETED") {
+				this.finishIntroImmediately();
+			}
+		};
+		this.containerEl.addEventListener("pointerdown", skipIntro, { once: true });
 
 		THREE.DefaultLoadingManager.onProgress = (
 			_,
@@ -163,13 +168,13 @@ export default class Flipbook {
 			// Do not block intro progression if an individual asset fails
 		};
 
-		// Safety timeout: If loading takes longer than 5 seconds, launch intro anyway
+		// Safety timeout: If loading takes longer than expected, launch intro anyway
 		setTimeout(() => {
 			if (!introStarted) {
 				console.warn("Loading timeout reached; starting intro");
 				startIntroOnce();
 			}
-		}, 5000);
+		}, this.isMobile ? 2500 : 4000);
 
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(
@@ -180,16 +185,38 @@ export default class Flipbook {
 		);
 
 		this.renderer = new THREE.WebGLRenderer({
-			antialias: true,
-			powerPreference: "high-performance",
+			antialias: !this.isMobile,
+			powerPreference: this.isMobile ? "default" : "high-performance",
 		});
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 		// this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		// this.renderer.toneMappingExposure = 1.2;
-		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+		this.renderer.setPixelRatio(
+			Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2),
+		);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.renderer.shadowMap.enabled = true;
-		this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		this.renderer.shadowMap.enabled = !this.isMobile;
+		if (!this.isMobile) {
+			this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		}
+
+		this.renderer.domElement.addEventListener(
+			"webglcontextlost",
+			event => {
+				event.preventDefault();
+				console.warn("WebGL context lost. Suppressing crash.");
+			},
+			false,
+		);
+		this.renderer.domElement.addEventListener(
+			"webglcontextrestored",
+			() => {
+				console.info("WebGL context restored. Re-rendering...");
+				this.render();
+			},
+			false,
+		);
+
 		this.renderer.domElement.classList.add("flipbook-canvas");
 		this.wrapperLinkEl = document.createElement("a");
 		this.wrapperLinkEl.draggable = false;
@@ -203,7 +230,9 @@ export default class Flipbook {
 		this.raycaster = new THREE.Raycaster();
 		this.sceneMousePos = new THREE.Vector2();
 
-		const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
+		const maxAnisotropy = this.isMobile
+			? 1
+			: Math.min(this.renderer.capabilities.getMaxAnisotropy(), 8);
 
 		// add pages
 		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
@@ -239,6 +268,7 @@ export default class Flipbook {
 				edgeColor: this.pageEdgeColor,
 				textureLoader: this.textureLoader,
 				maxAnisotropy,
+				isMobile: this.isMobile,
 			});
 			this.pages.push(page);
 		}
@@ -247,7 +277,7 @@ export default class Flipbook {
 		this.scene.add(this.ambientLight);
 
 		this.spotLight = new THREE.SpotLight();
-		this.spotLight.castShadow = true;
+		this.spotLight.castShadow = !this.isMobile;
 		this.spotLight.shadow.bias = -0.0001;
 		this.scene.add(this.spotLight);
 
@@ -267,10 +297,17 @@ export default class Flipbook {
 		const _texture = (url: string) => {
 			const texture = this.textureLoader.load(url);
 			texture.colorSpace = THREE.SRGBColorSpace;
-			texture.generateMipmaps = true;
-			texture.minFilter = THREE.LinearMipmapLinearFilter;
-			texture.magFilter = THREE.LinearFilter;
-			texture.anisotropy = maxAnisotropy;
+			if (this.isMobile) {
+				texture.generateMipmaps = false;
+				texture.minFilter = THREE.LinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = 1;
+			} else {
+				texture.generateMipmaps = true;
+				texture.minFilter = THREE.LinearMipmapLinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = maxAnisotropy;
+			}
 			return { map: texture };
 		};
 
@@ -294,8 +331,8 @@ export default class Flipbook {
 			this.coverThickness,
 		);
 		this.spineMesh = new THREE.Mesh(spineGeometry, spineMaterials);
-		this.spineMesh.receiveShadow = true;
-		this.spineMesh.castShadow = true;
+		this.spineMesh.receiveShadow = !this.isMobile;
+		this.spineMesh.castShadow = !this.isMobile;
 		this.spineMesh.position.z = this.spineZ;
 		this.spineMesh.renderOrder = 99;
 		this.group.add(this.spineMesh);
@@ -333,16 +370,23 @@ export default class Flipbook {
 		const deskGeometry = new THREE.PlaneGeometry(5216, 1956, 1, 1);
 		const deskTexture = this.textureLoader.load(this.textureUrls.desk);
 		deskTexture.colorSpace = THREE.SRGBColorSpace;
-		deskTexture.generateMipmaps = true;
-		deskTexture.minFilter = THREE.LinearMipmapLinearFilter;
-		deskTexture.magFilter = THREE.LinearFilter;
-		deskTexture.anisotropy = maxAnisotropy;
+		if (this.isMobile) {
+			deskTexture.generateMipmaps = false;
+			deskTexture.minFilter = THREE.LinearFilter;
+			deskTexture.magFilter = THREE.LinearFilter;
+			deskTexture.anisotropy = 1;
+		} else {
+			deskTexture.generateMipmaps = true;
+			deskTexture.minFilter = THREE.LinearMipmapLinearFilter;
+			deskTexture.magFilter = THREE.LinearFilter;
+			deskTexture.anisotropy = maxAnisotropy;
+		}
 		const deskMaterial = new THREE.MeshStandardMaterial({
 			map: deskTexture,
 		});
 		const deskMesh = new THREE.Mesh(deskGeometry, deskMaterial);
-		deskMesh.receiveShadow = true;
-		deskMesh.castShadow = true;
+		deskMesh.receiveShadow = !this.isMobile;
+		deskMesh.castShadow = !this.isMobile;
 		deskMesh.renderOrder = 100;
 		this.scene.add(deskMesh);
 
@@ -1148,11 +1192,6 @@ export default class Flipbook {
 				// handle active area click
 				const area = this.getActiveAreaAt(sceneMousePos);
 
-				if (area?.video) {
-					this.videoOverlay.open(area.video);
-					this.focusActiveArea(area, 1.125);
-				}
-
 				if (area?.zoom) {
 					this.focusActiveArea(area, 1.05);
 				}
@@ -1161,13 +1200,10 @@ export default class Flipbook {
 
 		this.updateCursor();
 	}
-
 	private async unfocusActiveArea() {
 		if (this.isChangingFocus) return;
 
 		this.focusedActiveArea = null;
-		this.videoOverlay.close();
-
 		this.isChangingFocus = true;
 		await this.restoreCamera(1100);
 		this.isChangingFocus = false;
@@ -1344,18 +1380,55 @@ export default class Flipbook {
 
 		await sleep(200); // make sure all the hard work is done
 
-		animateLightFlash(2500);
-		await animateLogoFlash(2500);
-		transitionToBottomView(3000);
-		await sleep(2000);
-		openFirstPage(3500);
-		await sleep(1000);
-		await transitionRaise(4000);
+		if (this.isMobile) {
+			// Fast, smooth mobile intro without black screen or long wait
+			this.spotLight.intensity = spotLightIntensity;
+			this.ambientLight.intensity = ambientLightIntensity;
+			this.introOverlay.dom.progress.style.opacity = "0";
+			logoEl.style.transition = "opacity 400ms ease-out";
+			logoEl.style.opacity = "0";
+			logoShineEl.style.display = "none";
+			await sleep(350);
+			this.introOverlay.dom.container.style.display = "none";
+			this.restoreCamera(0);
+			await openFirstPage(1200);
+			this.updateCursor();
+			this.introPhase = "COMPLETED";
+			this.onIntroCompleteCallbacks.forEach(cb => cb());
+			return;
+		}
 
-		// finalize
-		this.introOverlay.dom.container.style.display = "none";
-		this.updateCursor();
+		try {
+			animateLightFlash(2500);
+			await animateLogoFlash(2500);
+			transitionToBottomView(3000);
+			await sleep(2000);
+			openFirstPage(3500);
+			await sleep(1000);
+			await transitionRaise(4000);
+		} finally {
+			this.spotLight.intensity = spotLightIntensity;
+			this.ambientLight.intensity = ambientLightIntensity;
+			this.introOverlay.dom.container.style.display = "none";
+			this.updateCursor();
+			this.introPhase = "COMPLETED";
+			this.onIntroCompleteCallbacks.forEach(cb => cb());
+		}
+	}
+
+	public finishIntroImmediately(): void {
+		if (this.introPhase === "COMPLETED") return;
 		this.introPhase = "COMPLETED";
+		this.spotLight.intensity = this.settings.spotLightIntensity;
+		this.ambientLight.intensity = this.settings.ambientLightIntensity;
+		if (this.introOverlay?.dom?.container) {
+			this.introOverlay.dom.container.style.display = "none";
+		}
+		if (this.progress.getValue() === 0) {
+			this.progress.setValue(1);
+		}
+		this.restoreCamera(0);
+		this.updateCursor();
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
 	}
 

@@ -64,6 +64,7 @@ type PageParams = {
 	textureLoader: THREE.TextureLoader;
 	isFrontCover: boolean;
 	maxAnisotropy?: number;
+	isMobile?: boolean;
 };
 
 type PageControlPointParams = {
@@ -87,7 +88,6 @@ type PageActiveArea = PageArea & {
 	faceIndex: number;
 	title?: string;
 	link?: string | (() => string);
-	video?: string;
 	zoom?: PageArea;
 	preserveDefaultCursor?: boolean;
 };

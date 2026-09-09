@@ -38,11 +38,9 @@ Una **bitácora técnica en 3D interactiva** que adapta el motor de físicas de 
 │   │   │   ├── cover-front.jpg   # Portada personalizada con logo TG dorado
 │   │   │   ├── who-am-i.jpg      # Perfil, bio, iconos de contacto (GitHub, WhatsApp, LinkedIn)
 │   │   │   ├── my-story.jpg      # Historia de formación en Campuslands
-│   │   │   ├── skills.jpg        # Mandala de tecnologías (Three.js + zoomable)
 │   │   │   └── ...               # Proyectos, trayectoria, intereses, contraportada
 │   │   ├── desk.jpg              # Textura del escritorio (escena WebGL)
 │   │   └── logo.png              # Logo TG para pantalla de carga
-│   └── video/                    # Videos de demo de proyectos
 ├── src/
 │   ├── main.ts           # Punto de entrada: URLs de texturas y áreas interactivas
 │   ├── flipbook.ts       # Motor principal del libro 3D (Three.js + GLSL)
@@ -96,7 +94,7 @@ npm run preview
 | 6–7 | Intereses / Blanco | Ciberseguridad, Animación 3D y Análisis de Datos |
 | 8–11 | Capítulo II: Trayectoria | Mapa de ruta cronológico y evolución de aprendizaje |
 | 12–17 | Capítulo III: Experiencia | Campuslands (alto rendimiento, LogiTrack WMS, IA) y Consultoría & Freelance |
-| 18–29 | Capítulo IV: Proyectos | Fichas interactivas de proyectos con videos demostrativos |
+| 18–29 | Capítulo IV: Proyectos | Fichas interactivas de proyectos con enlaces a repositorios y demos en vivo |
 | 30 | El Libro | Descripción y créditos del portafolio 3D |
 | 31 | Contraportada | Archivo TEGQ y canales directos de contacto |
 

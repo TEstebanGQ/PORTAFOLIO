@@ -32,6 +32,7 @@ export default class Page {
 	private isFrontCover: boolean;
 	private hasTurnProgressUpdated = false;
 	private maxAnisotropy: number;
+	private isMobile: boolean;
 
 	constructor(pageParams: PageParams) {
 		this.textureUrls = pageParams.textureUrls;
@@ -44,19 +45,29 @@ export default class Page {
 		this.textureLoader = pageParams.textureLoader;
 		this.isFrontCover = pageParams.isFrontCover;
 		this.maxAnisotropy = pageParams.maxAnisotropy || 16;
+		this.isMobile = !!pageParams.isMobile;
 
 		if (this.isCover) {
 			this.zSegments = 1;
+		} else if (this.isMobile) {
+			this.zSegments = 12;
 		}
 
 		// Load front and back textures
 		const _texture = (url: string) => {
 			const texture = this.textureLoader.load(url);
 			texture.colorSpace = THREE.SRGBColorSpace;
-			texture.generateMipmaps = true;
-			texture.minFilter = THREE.LinearMipmapLinearFilter;
-			texture.magFilter = THREE.LinearFilter;
-			texture.anisotropy = this.maxAnisotropy;
+			if (this.isMobile) {
+				texture.generateMipmaps = false;
+				texture.minFilter = THREE.LinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = 1;
+			} else {
+				texture.generateMipmaps = true;
+				texture.minFilter = THREE.LinearMipmapLinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = this.maxAnisotropy;
+			}
 			return { map: texture, vertexColors: !this.isCover };
 		};
 		const _color = (hex: number) => ({
