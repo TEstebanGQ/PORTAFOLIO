@@ -15,6 +15,7 @@ Full Stack Developer · AI Solutions Integrator · Arquitecto de Software
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/)
 [![Email](https://img.shields.io/badge/Email-EA4335?style=flat&logo=gmail&logoColor=white)](mailto:tomasestebangonzalezquintero@gmail.com)
 
+[![Demo en vivo](https://img.shields.io/badge/🌐_Demo_en_vivo-portafolio--tegq--web.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://portafolio-tegq-web.netlify.app/)
 </div>
 
 ---
