@@ -1,6 +1,5 @@
 import "./style.css";
 import Flipbook from "./flipbook";
-import initChaptersNav from "./chapters-nav";
 
 declare global {
 	interface Window {
@@ -8,7 +7,7 @@ declare global {
 	}
 }
 
-function init() {
+document.addEventListener("DOMContentLoaded", () => {
 	const containerEl = document.getElementById("flipbook-container");
 
 	const pageWidth = 764;
@@ -18,13 +17,8 @@ function init() {
 		return;
 	}
 
-	const baseUrl = import.meta.env.BASE_URL || "";
-	const _url = (path: string) => {
-		if (baseUrl.endsWith("/") && path.startsWith("/")) {
-			return baseUrl + path.slice(1);
-		}
-		return baseUrl + path;
-	};
+	const baseUrl = "";
+	const _url = (path: string) => baseUrl + path;
 
 	window.flipbook = new Flipbook({
 		containerEl,
@@ -125,21 +119,19 @@ function init() {
 			},
 			{
 				faceIndex: 13,
-				link: "https://campuslands.com/",
+				link: "https://thorsystems.ru/",
 				top: 152 / pageHeight,
 				left: 50 / pageWidth,
-				width: 180 / pageWidth,
+				width: 160 / pageWidth,
 				height: 50 / pageHeight,
-				title: "Campuslands",
 			},
 			{
 				faceIndex: 16,
-				link: "https://wa.me/573167755887?text=Hola%20Tom%C3%A1s,%20te%20contacto%20desde%20tu%20portafolio",
-				top: 152 / pageHeight,
-				left: 50 / pageWidth,
-				width: 260 / pageWidth,
+				link: "https://www.upwork.com/freelancers/~01d961991b7e61979f",
+				top: 264 / pageHeight,
+				left: 400 / pageWidth,
+				width: 190 / pageWidth,
 				height: 50 / pageHeight,
-				title: "Contacto WhatsApp",
 			},
 			{
 				faceIndex: 18,
@@ -150,121 +142,183 @@ function init() {
 				height: 50 / pageHeight,
 			},
 			{
-				faceIndex: 19,
-				link: "https://github.com/TEstebanGQ/campuslands-inteligente",
-				top: 232.5 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - Campuslands Inteligente",
+				faceIndex: 21,
+				link: "https://github.com/Qbject/iq-tester",
+				top: 313 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 21,
-				link: "https://github.com/TEstebanGQ/logitrack-wms-springboot",
-				top: 245.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - LogiTrack WMS",
-			},
-			{
-				faceIndex: 21,
-				link: "https://logitrack.34.70.8.165.sslip.io",
-				top: 245.0 / pageHeight,
-				left: 250.0 / pageWidth,
-				width: 185.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "Demo en vivo - LogiTrack WMS",
-			},
-			{
-				faceIndex: 22,
-				link: "https://github.com/TEstebanGQ/n8n-attendance-ai-workflow",
-				top: 240.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - n8n Attendance AI",
-			},
-			{
-				faceIndex: 23,
-				link: "https://github.com/TEstebanGQ/github-mcp-server",
-				top: 232.5 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - GitHub MCP Server",
+				link: "https://www.whatsmyiq.online/",
+				top: 313 / pageHeight,
+				left: 288 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 25,
-				link: "https://github.com/TEstebanGQ/HelpDeskAI",
-				top: 240.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - HelpDesk AI",
+				link: "https://github.com/Qbject/exportrobot",
+				top: 313 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 26,
-				link: "https://github.com/TEstebanGQ/ecommerce-database-4nf",
-				top: 237.5 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - Ecommerce Database 4NF",
+				link: "https://github.com/Qbject/six-dot-bot",
+				top: 313 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
+			},
+			{
+				faceIndex: 26,
+				link: "https://t.me/sixdotbot",
+				top: 313 / pageHeight,
+				left: 288 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 27,
-				link: "https://github.com/TEstebanGQ/softskills-quest",
-				top: 240.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - SoftSkills Quest",
-			},
-			{
-				faceIndex: 28,
-				link: "https://github.com/TEstebanGQ/lms-learning-platform",
-				top: 240.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - LMS ABC Platform",
-			},
-			{
-				faceIndex: 28,
-				link: "https://proyecto-d1-js.netlify.app/",
-				top: 240.0 / pageHeight,
-				left: 250.0 / pageWidth,
-				width: 185.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "Demo en vivo - LMS ABC",
+				link: "https://github.com/Qbject/autoreply",
+				top: 313 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 29,
-				link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-				top: 240.0 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - Portafolio 3D",
+				link: "https://github.com/Qbject/the-game-of-fifteen",
+				top: 274 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
+			},
+			{
+				faceIndex: 29,
+				link: "https://qbject.github.io/the-game-of-fifteen/",
+				top: 274 / pageHeight,
+				left: 288 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 30,
 				link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-				top: 232.5 / pageHeight,
-				left: 115.0 / pageWidth,
-				width: 110.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "GitHub - Repositorio Oficial",
+				top: 351 / pageHeight,
+				left: 131 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
 			},
 			{
 				faceIndex: 30,
-				link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-				top: 232.5 / pageHeight,
-				left: 250.0 / pageWidth,
-				width: 185.0 / pageWidth,
-				height: 28.0 / pageHeight,
-				title: "Repositorio Oficial",
+				link: ".",
+				top: 351 / pageHeight,
+				left: 288 / pageWidth,
+				width: 143 / pageWidth,
+				height: 50 / pageHeight,
+			},
+			{
+				faceIndex: 19,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956204/qyou-demo.mp4",
+				top: 364 / pageHeight,
+				left: 75 / pageWidth,
+				width: 615 / pageWidth,
+				height: 416 / pageHeight,
+				title: "Watch qYou usage and features",
+			},
+			{
+				faceIndex: 21,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956198/iq-tester-demo.mp4",
+				top: 399 / pageHeight,
+				left: 50 / pageWidth,
+				width: 664 / pageWidth,
+				height: 365 / pageHeight,
+				title: "Watch IQ Tester usage and features",
+			},
+			{
+				faceIndex: 22,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956199/betting-tarot-demo.mp4",
+				top: 302 / pageHeight,
+				left: 79 / pageWidth,
+				width: 606 / pageWidth,
+				height: 540 / pageHeight,
+				title: "Watch Betting Tarot usage and features",
+			},
+			{
+				faceIndex: 25,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956199/exportrobot-demo-saving.mp4",
+				top: 432 / pageHeight,
+				left: 362 / pageWidth,
+				width: 351 / pageWidth,
+				height: 305 / pageHeight,
+				title: "Watch how ExportRobot saves messages",
+			},
+			{
+				faceIndex: 25,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956199/exportrobot-demo-browser.mp4",
+				top: 761 / pageHeight,
+				left: 362 / pageWidth,
+				width: 351 / pageWidth,
+				height: 269 / pageHeight,
+				title: "Watch how exported messages look in a browser",
+			},
+			{
+				faceIndex: 26,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956198/six-dot-bot-demo.mp4",
+				top: 402 / pageHeight,
+				left: 360 / pageWidth,
+				width: 354 / pageWidth,
+				height: 628 / pageHeight,
+				title: "Watch Six Dot Bot usage and features",
+			},
+			{
+				faceIndex: 27,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956199/autoreply-demo.mp4",
+				top: 410 / pageHeight,
+				left: 50 / pageWidth,
+				width: 664 / pageWidth,
+				height: 354 / pageHeight,
+				title: "Watch Autoreply configuration, usage and features",
+			},
+			{
+				faceIndex: 28,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956197/time-recorder-demo.mp4",
+				top: 291 / pageHeight,
+				left: 180 / pageWidth,
+				width: 404 / pageWidth,
+				height: 406 / pageHeight,
+				title: "Watch Time Recorder usage and features",
+			},
+			{
+				faceIndex: 29,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956198/fifteen-js-demo.mp4",
+				top: 365 / pageHeight,
+				left: 99 / pageWidth,
+				width: 567 / pageWidth,
+				height: 629 / pageHeight,
+				title: "Watch Fifteen.js usage and features",
+			},
+			{
+				faceIndex: 30,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956200/the-book-demo.mp4",
+				top: 351 / pageHeight,
+				left: 126 / pageWidth,
+				width: 505 / pageWidth,
+				height: 283 / pageHeight,
+				title: "Watch The Book while watching The Book",
+			},
+			{
+				faceIndex: 30,
+				video: "https://res.cloudinary.com/l4umsyfq/video/upload/v1788956202/the-book-bloopers.mp4",
+				top: 742 / pageHeight,
+				left: 126 / pageWidth,
+				width: 505 / pageWidth,
+				height: 280 / pageHeight,
+				title: "It was quite an experience :)",
 			},
 			{
 				faceIndex: 5,
@@ -282,12 +336,4 @@ function init() {
 			},
 		],
 	});
-
-	initChaptersNav(window.flipbook);
-}
-
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", init);
-} else {
-	init();
-}
+});
