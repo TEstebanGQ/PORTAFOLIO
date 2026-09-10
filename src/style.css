@@ -465,11 +465,6 @@ body {
 	-webkit-backdrop-filter: blur(10px);
 }
 
-.lang-icon {
-	font-size: 14px;
-	filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.6));
-}
-
 .lang-buttons-group {
 	display: flex;
 	align-items: center;
@@ -508,27 +503,6 @@ body {
 	font-size: 10px;
 }
 
-/* Keyboard Hint Banner in Chapters Nav */
-.chapters-keyboard-hint {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
-	padding: 6px 4px;
-	margin: 6px 0 2px;
-	background: rgba(0, 0, 0, 0.35);
-	border: 1px dashed rgba(212, 175, 55, 0.25);
-	border-radius: 4px;
-	color: #c9b48c;
-	font-size: 9.5px;
-	letter-spacing: 0.8px;
-	text-align: center;
-}
-
-.chapters-keyboard-hint .hint-icon {
-	font-size: 11px;
-}
-
 /* Toast feedback when switching language */
 .lang-toast-notification {
 	position: fixed;
@@ -555,117 +529,6 @@ body {
 	transform: translateX(-50%) translateY(0);
 }
 
-/* Floating button for English summary */
-.open-translation-btn {
-	position: fixed;
-	bottom: 24px;
-	right: 28px;
-	z-index: 20;
-	display: none;
-	align-items: center;
-	gap: 8px;
-	background: linear-gradient(160deg, rgba(26, 18, 12, 0.94) 0%, rgba(14, 9, 6, 0.97) 100%);
-	border: 1px solid rgba(212, 175, 55, 0.5);
-	border-radius: 20px;
-	padding: 8px 16px;
-	color: #ffe69c;
-	font-family: "Cinzel", serif;
-	font-size: 11.5px;
-	letter-spacing: 1px;
-	cursor: pointer;
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
-	transition: all 0.25s ease;
-	backdrop-filter: blur(8px);
-}
-
-.open-translation-btn.visible {
-	display: flex;
-	animation: fadeIn 0.4s ease forwards;
-}
-
-.open-translation-btn:hover {
-	transform: translateY(-2px);
-	border-color: rgba(245, 222, 160, 0.8);
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(212, 175, 55, 0.3);
-}
-
-/* Translation Modal Overlay */
-.translation-modal-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.7);
-	backdrop-filter: blur(6px);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	z-index: 50;
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.translation-modal-overlay.open {
-	display: flex;
-	opacity: 1;
-}
-
-.translation-modal-card {
-	position: relative;
-	width: min(520px, 90vw);
-	max-height: 80vh;
-	overflow-y: auto;
-	background: linear-gradient(160deg, #1b130c 0%, #0d0905 100%);
-	border: 1px solid rgba(212, 175, 55, 0.6);
-	border-radius: 8px;
-	padding: 24px;
-	color: #eedcba;
-	box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(212, 175, 55, 0.08);
-	font-family: "EB Garamond", serif;
-}
-
-.translation-badge {
-	display: inline-block;
-	background: rgba(212, 175, 55, 0.2);
-	border: 1px solid rgba(212, 175, 55, 0.5);
-	color: #ffe69c;
-	font-family: "Cinzel", serif;
-	font-size: 10px;
-	letter-spacing: 1.5px;
-	padding: 3px 8px;
-	border-radius: 4px;
-	margin-bottom: 8px;
-}
-
-.translation-modal-title {
-	margin: 4px 0 14px;
-	font-family: "Cinzel", serif;
-	font-size: 18px;
-	color: #ffe69c;
-	letter-spacing: 1px;
-}
-
-.translation-modal-body {
-	font-size: 15px;
-	line-height: 1.65;
-	color: #d8c5a4;
-}
-
-.translation-modal-close {
-	position: absolute;
-	top: 14px;
-	right: 14px;
-	background: none;
-	border: none;
-	color: #a89478;
-	font-size: 18px;
-	cursor: pointer;
-	padding: 4px 8px;
-	transition: color 0.2s;
-}
-
-.translation-modal-close:hover {
-	color: #ffe69c;
-}
-
 @media (max-width: 768px) {
 	.lang-switcher-widget {
 		top: 14px;
@@ -677,11 +540,5 @@ body {
 	.lang-option-btn {
 		font-size: 11px;
 		padding: 3px 6px;
-	}
-	.open-translation-btn {
-		bottom: 16px;
-		right: 16px;
-		font-size: 10.5px;
-		padding: 6px 12px;
 	}
 }
