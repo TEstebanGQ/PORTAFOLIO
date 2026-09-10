@@ -1540,4 +1540,15 @@ export default class Flipbook {
 		this.pageActiveAreas = areas;
 		this.updateCursor();
 	}
+
+	public updatePageTextures(pageUrls: string[]): void {
+		const totalPages = Math.ceil(pageUrls.length / 2);
+		for (let i = 0; i < totalPages; i++) {
+			const frontUrl = pageUrls[i * 2];
+			const backUrl = pageUrls[i * 2 + 1];
+			if (this.pages[i] && frontUrl && backUrl) {
+				this.pages[i].updateTextures(frontUrl, backUrl);
+			}
+		}
+	}
 }

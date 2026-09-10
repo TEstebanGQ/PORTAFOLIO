@@ -219,6 +219,44 @@ function getActiveAreas(lang: Language, pageWidth: number, pageHeight: number) {
 	];
 }
 
+function getPageTextureUrls(lang: Language, _url: (path: string) => string): string[] {
+	const dir = lang === "en" ? "/img/pages-en/" : "/img/pages/";
+	return [
+		_url(`${dir}cover-front.jpg`),
+		_url(`${dir}welcome.jpg`),
+		_url(`${dir}about.jpg`),
+		_url(`${dir}who-am-i.jpg`),
+		_url(`${dir}my-story.jpg`),
+		_url(`${dir}skills.jpg`),
+		_url(`${dir}interests.jpg`),
+		_url(`${dir}blank.jpg`),
+		_url(`${dir}journey.jpg`),
+		_url(`${dir}map-1.jpg`),
+		_url(`${dir}map-2.jpg`),
+		_url(`${dir}blank.jpg`),
+		_url(`${dir}career.jpg`),
+		_url(`${dir}thor-systems.jpg`),
+		_url(`${dir}thor-systems-2.jpg`),
+		_url(`${dir}freelance.jpg`),
+		_url(`${dir}freelance-2.jpg`),
+		_url(`${dir}blank.jpg`),
+		_url(`${dir}projects.jpg`),
+		_url(`${dir}qyou.jpg`),
+		_url(`${dir}qyou-2.jpg`),
+		_url(`${dir}iq-tester.jpg`),
+		_url(`${dir}betting-tarot.jpg`),
+		_url(`${dir}autoposter.jpg`),
+		_url(`${dir}autoposter-2.jpg`),
+		_url(`${dir}export-robot.jpg`),
+		_url(`${dir}six-dot-bot.jpg`),
+		_url(`${dir}autoreply.jpg`),
+		_url(`${dir}time-recorder.jpg`),
+		_url(`${dir}fifteen-js.jpg`),
+		_url(`${dir}the-book.jpg`),
+		_url(`${dir}cover-back.jpg`),
+	];
+}
+
 function init() {
 	const containerEl = document.getElementById("flipbook-container");
 
@@ -242,40 +280,7 @@ function init() {
 	window.flipbook = new Flipbook({
 		containerEl,
 		textureUrls: {
-			pages: [
-				_url("/img/pages/cover-front.jpg"),
-				_url("/img/pages/welcome.jpg"),
-				_url("/img/pages/about.jpg"),
-				_url("/img/pages/who-am-i.jpg"),
-				_url("/img/pages/my-story.jpg"),
-				_url("/img/pages/skills.jpg"),
-				_url("/img/pages/interests.jpg"),
-				_url("/img/pages/blank.jpg"),
-				_url("/img/pages/journey.jpg"),
-				_url("/img/pages/map-1.jpg"),
-				_url("/img/pages/map-2.jpg"),
-				_url("/img/pages/blank.jpg"),
-				_url("/img/pages/career.jpg"),
-				_url("/img/pages/thor-systems.jpg"),
-				_url("/img/pages/thor-systems-2.jpg"),
-				_url("/img/pages/freelance.jpg"),
-				_url("/img/pages/freelance-2.jpg"),
-				_url("/img/pages/blank.jpg"),
-				_url("/img/pages/projects.jpg"),
-				_url("/img/pages/qyou.jpg"),
-				_url("/img/pages/qyou-2.jpg"),
-				_url("/img/pages/iq-tester.jpg"),
-				_url("/img/pages/betting-tarot.jpg"),
-				_url("/img/pages/autoposter.jpg"),
-				_url("/img/pages/autoposter-2.jpg"),
-				_url("/img/pages/export-robot.jpg"),
-				_url("/img/pages/six-dot-bot.jpg"),
-				_url("/img/pages/autoreply.jpg"),
-				_url("/img/pages/time-recorder.jpg"),
-				_url("/img/pages/fifteen-js.jpg"),
-				_url("/img/pages/the-book.jpg"),
-				_url("/img/pages/cover-back.jpg"),
-			],
+			pages: getPageTextureUrls(initialLang, _url),
 			spineInner: _url("/img/pages/spine.jpg"),
 			spineOuter: _url("/img/pages/spine.jpg"),
 			coverEdgeTB: _url("/img/pages/cover-edge-tb.jpg"),
@@ -298,6 +303,7 @@ function init() {
 	const nav = initChaptersNav(window.flipbook);
 	nav.onLanguageChange(newLang => {
 		window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
+		window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
 	});
 }
 

@@ -330,4 +330,36 @@ export default class Page {
 
 		return [cornerTL, cornerTR, cornerBL, cornerBR];
 	}
+
+	public updateTextures(frontUrl: string, backUrl: string) {
+		const loadTexture = (url: string) => {
+			const texture = this.textureLoader.load(url);
+			texture.colorSpace = THREE.SRGBColorSpace;
+			if (this.isMobile) {
+				texture.generateMipmaps = false;
+				texture.minFilter = THREE.LinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = 1;
+			} else {
+				texture.generateMipmaps = true;
+				texture.minFilter = THREE.LinearMipmapLinearFilter;
+				texture.magFilter = THREE.LinearFilter;
+				texture.anisotropy = this.maxAnisotropy;
+			}
+			return texture;
+		};
+
+		if (Array.isArray(this.mesh.material)) {
+			const backMat = this.mesh.material[0] as THREE.MeshStandardMaterial;
+			const frontMat = this.mesh.material[1] as THREE.MeshStandardMaterial;
+			if (backMat) {
+				backMat.map = loadTexture(backUrl);
+				backMat.needsUpdate = true;
+			}
+			if (frontMat) {
+				frontMat.map = loadTexture(frontUrl);
+				frontMat.needsUpdate = true;
+			}
+		}
+	}
 }
