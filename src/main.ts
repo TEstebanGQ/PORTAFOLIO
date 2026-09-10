@@ -275,7 +275,15 @@ function init() {
 		return baseUrl + path;
 	};
 
-	const initialLang = ((localStorage.getItem("portfolio_lang") as Language) || "es") === "en" ? "en" : "es";
+	const urlParams = new URLSearchParams(window.location.search);
+	const paramLang = urlParams.get("lang") as Language | null;
+	let initialLang: Language = "es";
+	if (paramLang === "en" || paramLang === "es") {
+		initialLang = paramLang;
+		localStorage.setItem("portfolio_lang", paramLang);
+	} else {
+		initialLang = ((localStorage.getItem("portfolio_lang") as Language) || "es") === "en" ? "en" : "es";
+	}
 
 	window.flipbook = new Flipbook({
 		containerEl,

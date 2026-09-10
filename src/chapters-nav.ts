@@ -62,8 +62,15 @@ export class ChaptersNav {
 
 	constructor(flipbook: Flipbook) {
 		this.flipbook = flipbook;
-		const savedLang = (localStorage.getItem("portfolio_lang") as Language) || "es";
-		this.currentLang = savedLang === "en" ? "en" : "es";
+		const urlParams = new URLSearchParams(window.location.search);
+		const paramLang = urlParams.get("lang") as Language | null;
+		if (paramLang === "en" || paramLang === "es") {
+			this.currentLang = paramLang;
+			localStorage.setItem("portfolio_lang", paramLang);
+		} else {
+			const savedLang = (localStorage.getItem("portfolio_lang") as Language) || "es";
+			this.currentLang = savedLang === "en" ? "en" : "es";
+		}
 
 		this.createElements();
 		this.createLanguageSwitcher();
@@ -84,8 +91,9 @@ export class ChaptersNav {
 		if (this.currentLang === lang) return;
 		this.currentLang = lang;
 		localStorage.setItem("portfolio_lang", lang);
-		this.applyLanguage(lang, true);
-		this.onLangChangeCallbacks.forEach(cb => cb(lang));
+		const url = new URL(window.location.href);
+		url.searchParams.set("lang", lang);
+		window.location.href = url.toString();
 	}
 
 	private createLanguageSwitcher() {

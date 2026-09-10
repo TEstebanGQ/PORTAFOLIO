@@ -978,6 +978,26 @@ def generate_cover_back():
     img.save(os.path.join(OUT_PAGES, "cover-back.jpg"), "JPEG", quality=95)
     print("Generated cover-back.jpg")
 
+def generate_cover_front():
+    img = Image.open(os.path.join(SRC_PAGES, "cover-front.jpg")).convert("RGB")
+    w, h = img.size
+    leather_sample = img.crop((550, 170, 990, 260))
+    mask = Image.new("L", (440, 90), 255).filter(ImageFilter.GaussianBlur(10))
+    img.paste(leather_sample, (550, 280), mask)
+
+    draw = ImageDraw.Draw(img)
+    f = get_font("regular", 56)
+    bbox = draw.textbbox((0, 0), "The Book of", font=f)
+    tw = bbox[2] - bbox[0]
+    x = (w - tw) // 2
+    y = 295
+
+    draw.text((x + 2, y + 2), "The Book of", font=f, fill=(20, 18, 38))
+    draw.text((x, y), "The Book of", font=f, fill=(230, 215, 175))
+
+    img.save(os.path.join(OUT_PAGES, "cover-front.jpg"), "JPEG", quality=95)
+    print("Generated cover-front.jpg")
+
 def copy_static_assets():
     assets = [
         "blank.jpg", "cover-edge-lr.jpg", "cover-edge-tb.jpg",
@@ -988,11 +1008,6 @@ def copy_static_assets():
         dst = os.path.join(OUT_PAGES, a)
         shutil.copy2(src, dst)
         print(f"Copied static asset: {a}")
-        
-    cf_src = os.path.join(SRC_PAGES, "cover-front.jpg")
-    cf_dst = os.path.join(OUT_PAGES, "cover-front.jpg")
-    if not os.path.exists(cf_dst):
-        shutil.copy2(cf_src, cf_dst)
 
 def main():
     os.makedirs(OUT_PAGES, exist_ok=True)
@@ -1000,6 +1015,7 @@ def main():
     
     print("=== STARTING REFINED FULL ENGLISH PAGE GENERATION ===")
     copy_static_assets()
+    generate_cover_front()
     generate_welcome(blank)
     generate_about(blank)
     generate_who_am_i(blank)
