@@ -493,6 +493,22 @@ export default class Flipbook {
 				if (this.introPhase === "COMPLETED") {
 					this.unfocusActiveArea();
 				}
+			} else if (
+				event.key === "ArrowRight" ||
+				event.key === "ArrowDown" ||
+				event.code === "ArrowRight" ||
+				event.code === "ArrowDown"
+			) {
+				event.preventDefault();
+				this.nextPage();
+			} else if (
+				event.key === "ArrowLeft" ||
+				event.key === "ArrowUp" ||
+				event.code === "ArrowLeft" ||
+				event.code === "ArrowUp"
+			) {
+				event.preventDefault();
+				this.prevPage();
 			} else if (event.key === "d" || event.code === "KeyD") {
 				toggleVisibility(this.datGui.domElement);
 			} else if (event.key === "f" || event.code === "KeyF") {
@@ -1501,5 +1517,27 @@ export default class Flipbook {
 				},
 			});
 		});
+	}
+
+	public async nextPage(): Promise<void> {
+		if (this.introPhase === "LOADING") return;
+		const current = Math.round(this.progress.getValue());
+		const max = this.pages.length;
+		if (current < max) {
+			await this.goToPage(current + 1);
+		}
+	}
+
+	public async prevPage(): Promise<void> {
+		if (this.introPhase === "LOADING") return;
+		const current = Math.round(this.progress.getValue());
+		if (current > 0) {
+			await this.goToPage(current - 1);
+		}
+	}
+
+	public setActiveAreas(areas: PageActiveArea[]): void {
+		this.pageActiveAreas = areas;
+		this.updateCursor();
 	}
 }
