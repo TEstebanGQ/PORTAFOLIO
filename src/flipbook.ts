@@ -271,6 +271,7 @@ export default class Flipbook {
 				textureLoader: this.textureLoader,
 				maxAnisotropy,
 				isMobile: this.isMobile,
+				textureCache: this.textureCache,
 			});
 			this.pages.push(page);
 		}
@@ -1554,6 +1555,7 @@ export default class Flipbook {
 				this.pages[i].updateTextures(frontTex || frontUrl, backTex || backUrl);
 			}
 		}
+		this.render();
 	}
 
 	public preloadTextures(urls: string[]): void {

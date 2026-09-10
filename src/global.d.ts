@@ -65,6 +65,7 @@ type PageParams = {
 	isFrontCover: boolean;
 	maxAnisotropy?: number;
 	isMobile?: boolean;
+	textureCache?: Map<string, THREE.Texture>;
 };
 
 type PageControlPointParams = {

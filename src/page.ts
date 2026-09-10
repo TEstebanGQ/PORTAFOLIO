@@ -33,6 +33,7 @@ export default class Page {
 	private hasTurnProgressUpdated = false;
 	private maxAnisotropy: number;
 	private isMobile: boolean;
+	private textureCache?: Map<string, THREE.Texture>;
 
 	constructor(pageParams: PageParams) {
 		this.textureUrls = pageParams.textureUrls;
@@ -46,6 +47,7 @@ export default class Page {
 		this.isFrontCover = pageParams.isFrontCover;
 		this.maxAnisotropy = pageParams.maxAnisotropy || 16;
 		this.isMobile = !!pageParams.isMobile;
+		this.textureCache = pageParams.textureCache;
 
 		if (this.isCover) {
 			this.zSegments = 1;
@@ -55,6 +57,10 @@ export default class Page {
 
 		// Load front and back textures
 		const _texture = (url: string) => {
+			if (this.textureCache?.has(url)) {
+				const cached = this.textureCache.get(url)!;
+				return { map: cached, vertexColors: !this.isCover };
+			}
 			const texture = this.textureLoader.load(url);
 			texture.colorSpace = THREE.SRGBColorSpace;
 			if (this.isMobile) {
@@ -67,6 +73,9 @@ export default class Page {
 				texture.minFilter = THREE.LinearMipmapLinearFilter;
 				texture.magFilter = THREE.LinearFilter;
 				texture.anisotropy = this.maxAnisotropy;
+			}
+			if (this.textureCache) {
+				this.textureCache.set(url, texture);
 			}
 			return { map: texture, vertexColors: !this.isCover };
 		};
@@ -356,13 +365,21 @@ export default class Page {
 			const frontMat = this.mesh.material[1] as THREE.MeshStandardMaterial;
 
 			if (backMat && back) {
-				if (back instanceof THREE.Texture) {
-					applyTextureSettings(back);
-					backMat.map = back;
+				const resolvedBack =
+					typeof back === "string" && this.textureCache?.has(back)
+						? this.textureCache.get(back)!
+						: back;
+
+				if (resolvedBack instanceof THREE.Texture) {
+					applyTextureSettings(resolvedBack);
+					backMat.map = resolvedBack;
 					backMat.needsUpdate = true;
 				} else {
-					this.textureLoader.load(back, (loadedTex) => {
+					this.textureLoader.load(resolvedBack, (loadedTex) => {
 						applyTextureSettings(loadedTex);
+						if (this.textureCache) {
+							this.textureCache.set(resolvedBack, loadedTex);
+						}
 						backMat.map = loadedTex;
 						backMat.needsUpdate = true;
 					});
@@ -370,13 +387,21 @@ export default class Page {
 			}
 
 			if (frontMat && front) {
-				if (front instanceof THREE.Texture) {
-					applyTextureSettings(front);
-					frontMat.map = front;
+				const resolvedFront =
+					typeof front === "string" && this.textureCache?.has(front)
+						? this.textureCache.get(front)!
+						: front;
+
+				if (resolvedFront instanceof THREE.Texture) {
+					applyTextureSettings(resolvedFront);
+					frontMat.map = resolvedFront;
 					frontMat.needsUpdate = true;
 				} else {
-					this.textureLoader.load(front, (loadedTex) => {
+					this.textureLoader.load(resolvedFront, (loadedTex) => {
 						applyTextureSettings(loadedTex);
+						if (this.textureCache) {
+							this.textureCache.set(resolvedFront, loadedTex);
+						}
 						frontMat.map = loadedTex;
 						frontMat.needsUpdate = true;
 					});
