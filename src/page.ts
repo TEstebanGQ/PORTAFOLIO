@@ -331,7 +331,10 @@ export default class Page {
 		return [cornerTL, cornerTR, cornerBL, cornerBR];
 	}
 
-	public updateTextures(frontUrl: string, backUrl: string) {
+	public updateTextures(
+		front: string | THREE.Texture,
+		back: string | THREE.Texture,
+	) {
 		const applyTextureSettings = (texture: THREE.Texture) => {
 			texture.colorSpace = THREE.SRGBColorSpace;
 			if (this.isMobile) {
@@ -351,19 +354,33 @@ export default class Page {
 		if (Array.isArray(this.mesh.material)) {
 			const backMat = this.mesh.material[0] as THREE.MeshStandardMaterial;
 			const frontMat = this.mesh.material[1] as THREE.MeshStandardMaterial;
-			if (backMat && backUrl) {
-				this.textureLoader.load(backUrl, (loadedTex) => {
-					applyTextureSettings(loadedTex);
-					backMat.map = loadedTex;
+
+			if (backMat && back) {
+				if (back instanceof THREE.Texture) {
+					applyTextureSettings(back);
+					backMat.map = back;
 					backMat.needsUpdate = true;
-				});
+				} else {
+					this.textureLoader.load(back, (loadedTex) => {
+						applyTextureSettings(loadedTex);
+						backMat.map = loadedTex;
+						backMat.needsUpdate = true;
+					});
+				}
 			}
-			if (frontMat && frontUrl) {
-				this.textureLoader.load(frontUrl, (loadedTex) => {
-					applyTextureSettings(loadedTex);
-					frontMat.map = loadedTex;
+
+			if (frontMat && front) {
+				if (front instanceof THREE.Texture) {
+					applyTextureSettings(front);
+					frontMat.map = front;
 					frontMat.needsUpdate = true;
-				});
+				} else {
+					this.textureLoader.load(front, (loadedTex) => {
+						applyTextureSettings(loadedTex);
+						frontMat.map = loadedTex;
+						frontMat.needsUpdate = true;
+					});
+				}
 			}
 		}
 	}

@@ -77,6 +77,7 @@ export default class Flipbook {
 	private spotLightHelper: THREE.SpotLightHelper | null = null;
 	private spotShadowHelper: THREE.CameraHelper | null = null;
 	private textureLoader: THREE.TextureLoader;
+	private textureCache: Map<string, THREE.Texture> = new Map();
 	private initCompleted: boolean = false;
 	private introOverlay: IntroOverlay;
 
@@ -225,6 +226,7 @@ export default class Flipbook {
 		this.containerEl.appendChild(this.wrapperLinkEl);
 		this.wrapperLinkEl.appendChild(this.renderer.domElement);
 
+		THREE.Cache.enabled = true;
 		this.textureLoader = new THREE.TextureLoader();
 
 		this.raycaster = new THREE.Raycaster();
@@ -1547,19 +1549,43 @@ export default class Flipbook {
 			const frontUrl = pageUrls[i * 2];
 			const backUrl = pageUrls[i * 2 + 1];
 			if (this.pages[i] && frontUrl && backUrl) {
-				this.pages[i].updateTextures(frontUrl, backUrl);
+				const frontTex = this.textureCache.get(frontUrl);
+				const backTex = this.textureCache.get(backUrl);
+				this.pages[i].updateTextures(frontTex || frontUrl, backTex || backUrl);
 			}
 		}
 	}
 
 	public preloadTextures(urls: string[]): void {
-		setTimeout(() => {
-			urls.forEach(url => {
-				if (url) {
-					const img = new Image();
-					img.src = url;
+		const maxAnisotropy = this.isMobile
+			? 1
+			: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 8, 8);
+
+		urls.forEach(url => {
+			if (!url || this.textureCache.has(url)) return;
+			this.textureLoader.load(url, (loadedTex) => {
+				loadedTex.colorSpace = THREE.SRGBColorSpace;
+				if (this.isMobile) {
+					loadedTex.generateMipmaps = false;
+					loadedTex.minFilter = THREE.LinearFilter;
+					loadedTex.magFilter = THREE.LinearFilter;
+					loadedTex.anisotropy = 1;
+				} else {
+					loadedTex.generateMipmaps = true;
+					loadedTex.minFilter = THREE.LinearMipmapLinearFilter;
+					loadedTex.magFilter = THREE.LinearFilter;
+					loadedTex.anisotropy = maxAnisotropy;
 				}
+				loadedTex.needsUpdate = true;
+				if (this.renderer) {
+					try {
+						this.renderer.initTexture(loadedTex);
+					} catch (e) {
+						// Renderer may not be ready, ignore
+					}
+				}
+				this.textureCache.set(url, loadedTex);
 			});
-		}, 1500);
+		});
 	}
 }
