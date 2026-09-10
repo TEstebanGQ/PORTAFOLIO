@@ -332,8 +332,7 @@ export default class Page {
 	}
 
 	public updateTextures(frontUrl: string, backUrl: string) {
-		const loadTexture = (url: string) => {
-			const texture = this.textureLoader.load(url);
+		const applyTextureSettings = (texture: THREE.Texture) => {
 			texture.colorSpace = THREE.SRGBColorSpace;
 			if (this.isMobile) {
 				texture.generateMipmaps = false;
@@ -346,19 +345,25 @@ export default class Page {
 				texture.magFilter = THREE.LinearFilter;
 				texture.anisotropy = this.maxAnisotropy;
 			}
-			return texture;
+			texture.needsUpdate = true;
 		};
 
 		if (Array.isArray(this.mesh.material)) {
 			const backMat = this.mesh.material[0] as THREE.MeshStandardMaterial;
 			const frontMat = this.mesh.material[1] as THREE.MeshStandardMaterial;
-			if (backMat) {
-				backMat.map = loadTexture(backUrl);
-				backMat.needsUpdate = true;
+			if (backMat && backUrl) {
+				this.textureLoader.load(backUrl, (loadedTex) => {
+					applyTextureSettings(loadedTex);
+					backMat.map = loadedTex;
+					backMat.needsUpdate = true;
+				});
 			}
-			if (frontMat) {
-				frontMat.map = loadTexture(frontUrl);
-				frontMat.needsUpdate = true;
+			if (frontMat && frontUrl) {
+				this.textureLoader.load(frontUrl, (loadedTex) => {
+					applyTextureSettings(loadedTex);
+					frontMat.map = loadedTex;
+					frontMat.needsUpdate = true;
+				});
 			}
 		}
 	}

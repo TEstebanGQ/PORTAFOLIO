@@ -1551,4 +1551,15 @@ export default class Flipbook {
 			}
 		}
 	}
+
+	public preloadTextures(urls: string[]): void {
+		setTimeout(() => {
+			urls.forEach(url => {
+				if (url) {
+					const img = new Image();
+					img.src = url;
+				}
+			});
+		}, 1500);
+	}
 }
