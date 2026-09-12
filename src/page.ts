@@ -53,7 +53,7 @@ export default class Page {
 		if (this.isCover) {
 			this.zSegments = 1;
 		} else if (this.isMobile) {
-			this.zSegments = 6;
+			this.zSegments = 3;
 		}
 
 		// Load front and back textures
@@ -105,16 +105,20 @@ export default class Page {
 			textures.edgeRight = _texture(this.textureUrls.edgeLR);
 		}
 
+		const MaterialClass = this.isMobile
+			? THREE.MeshLambertMaterial
+			: THREE.MeshStandardMaterial;
+
 		let edgeTopMat: THREE.Material;
 		let edgeBottomMat: THREE.Material;
 		let edgeLeftMat: THREE.Material;
 		let edgeRightMat: THREE.Material;
 
 		if (this.isCover) {
-			edgeTopMat = new THREE.MeshStandardMaterial(textures.edgeTop);
-			edgeBottomMat = new THREE.MeshStandardMaterial(textures.edgeBottom);
-			edgeLeftMat = new THREE.MeshStandardMaterial(textures.edgeLeft);
-			edgeRightMat = new THREE.MeshStandardMaterial(textures.edgeRight);
+			edgeTopMat = new MaterialClass(textures.edgeTop);
+			edgeBottomMat = new MaterialClass(textures.edgeBottom);
+			edgeLeftMat = new MaterialClass(textures.edgeLeft);
+			edgeRightMat = new MaterialClass(textures.edgeRight);
 		} else {
 			if (!Page.sharedEdgeMaterial) {
 				Page.sharedEdgeMaterial = new THREE.MeshLambertMaterial({
@@ -128,8 +132,8 @@ export default class Page {
 		}
 
 		const materials = [
-			new THREE.MeshStandardMaterial(textures.back),
-			new THREE.MeshStandardMaterial(textures.front),
+			new MaterialClass(textures.back),
+			new MaterialClass(textures.front),
 			edgeTopMat,
 			edgeBottomMat,
 			edgeRightMat,
@@ -146,8 +150,8 @@ export default class Page {
 		);
 
 		this.mesh = new THREE.Mesh(geometry, materials);
-		this.mesh.receiveShadow = true;
-		this.mesh.castShadow = true;
+		this.mesh.receiveShadow = !this.isMobile;
+		this.mesh.castShadow = !this.isMobile;
 		// this.mesh = new THREE.Mesh(
 		// 	geometry,
 		// 	new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }),

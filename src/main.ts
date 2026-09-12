@@ -309,11 +309,13 @@ function init() {
 	});
 
 	window.flipbook.onIntroCompleted(() => {
-		const nav = initChaptersNav(window.flipbook);
-		nav.onLanguageChange(newLang => {
-			window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
-			window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
-		});
+		setTimeout(() => {
+			const nav = initChaptersNav(window.flipbook);
+			nav.onLanguageChange(newLang => {
+				window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
+				window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
+			});
+		}, 100);
 	});
 }
 

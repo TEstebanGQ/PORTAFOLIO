@@ -352,13 +352,17 @@ export default class Flipbook {
 			spineEdgeLR: _texture(this.textureUrls.spineEdgeLR),
 			spineEdgeTB: _texture(this.textureUrls.spineEdgeTB),
 		};
+		const SpineMaterialClass = this.isMobile
+			? THREE.MeshLambertMaterial
+			: THREE.MeshStandardMaterial;
+
 		const spineMaterials = [
-			new THREE.MeshStandardMaterial(textures.spineEdgeLR), // right face
-			new THREE.MeshStandardMaterial(textures.spineEdgeLR), // left face
-			new THREE.MeshStandardMaterial(textures.spineEdgeTB), // top face
-			new THREE.MeshStandardMaterial(textures.spineEdgeTB), // bottom face
-			new THREE.MeshStandardMaterial(textures.spineInner), // front face
-			new THREE.MeshStandardMaterial(textures.spineOuter), // back face
+			new SpineMaterialClass(textures.spineEdgeLR), // right face
+			new SpineMaterialClass(textures.spineEdgeLR), // left face
+			new SpineMaterialClass(textures.spineEdgeTB), // top face
+			new SpineMaterialClass(textures.spineEdgeTB), // bottom face
+			new SpineMaterialClass(textures.spineInner), // front face
+			new SpineMaterialClass(textures.spineOuter), // back face
 		];
 		const spineGeometry = new THREE.BoxGeometry(
 			this.spineWidth,
@@ -416,7 +420,11 @@ export default class Flipbook {
 			deskTexture.magFilter = THREE.LinearFilter;
 			deskTexture.anisotropy = maxAnisotropy;
 		}
-		const deskMaterial = new THREE.MeshStandardMaterial({
+		const DeskMaterialClass = this.isMobile
+			? THREE.MeshLambertMaterial
+			: THREE.MeshStandardMaterial;
+
+		const deskMaterial = new DeskMaterialClass({
 			map: deskTexture,
 		});
 		const deskMesh = new THREE.Mesh(deskGeometry, deskMaterial);
@@ -1806,6 +1814,6 @@ export default class Flipbook {
 					this.ensurePageLoaded(nextPageIndex);
 				}
 			}
-		}, 600);
+		}, this.isMobile ? 4000 : 800);
 	}
 }
