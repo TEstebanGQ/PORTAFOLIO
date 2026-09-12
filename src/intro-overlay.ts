@@ -18,6 +18,7 @@ export default class IntroOverlay {
 	}
 
 	public onProgress(newProgress: number) {
-		this.dom.progressInner.style.width = newProgress * 100 + "%";
+		const clamped = Math.min(Math.max(newProgress, 0), 1);
+		this.dom.progressInner.style.transform = `scaleX(${clamped})`;
 	}
 }

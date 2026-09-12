@@ -34,6 +34,7 @@ export default class Page {
 	private maxAnisotropy: number;
 	private isMobile: boolean;
 	private textureCache?: Map<string, THREE.Texture>;
+	private static sharedEdgeMaterial: THREE.MeshLambertMaterial | null = null;
 
 	constructor(pageParams: PageParams) {
 		this.textureUrls = pageParams.textureUrls;
@@ -43,16 +44,16 @@ export default class Page {
 		this.rootThickness = pageParams.rootThickness || 4;
 		this.isCover = !!pageParams.isCover;
 		this.edgeColor = pageParams.edgeColor || 0xffffff;
+		this.isFrontCover = !!pageParams.isFrontCover;
 		this.textureLoader = pageParams.textureLoader;
-		this.isFrontCover = pageParams.isFrontCover;
-		this.maxAnisotropy = pageParams.maxAnisotropy || 16;
-		this.isMobile = !!pageParams.isMobile;
+		this.maxAnisotropy = pageParams.maxAnisotropy;
+		this.isMobile = pageParams.isMobile;
 		this.textureCache = pageParams.textureCache;
 
 		if (this.isCover) {
 			this.zSegments = 1;
 		} else if (this.isMobile) {
-			this.zSegments = 12;
+			this.zSegments = 6;
 		}
 
 		// Load front and back textures
@@ -104,13 +105,35 @@ export default class Page {
 			textures.edgeRight = _texture(this.textureUrls.edgeLR);
 		}
 
+		let edgeTopMat: THREE.Material;
+		let edgeBottomMat: THREE.Material;
+		let edgeLeftMat: THREE.Material;
+		let edgeRightMat: THREE.Material;
+
+		if (this.isCover) {
+			edgeTopMat = new THREE.MeshStandardMaterial(textures.edgeTop);
+			edgeBottomMat = new THREE.MeshStandardMaterial(textures.edgeBottom);
+			edgeLeftMat = new THREE.MeshStandardMaterial(textures.edgeLeft);
+			edgeRightMat = new THREE.MeshStandardMaterial(textures.edgeRight);
+		} else {
+			if (!Page.sharedEdgeMaterial) {
+				Page.sharedEdgeMaterial = new THREE.MeshLambertMaterial({
+					color: this.edgeColor,
+				});
+			}
+			edgeTopMat = Page.sharedEdgeMaterial;
+			edgeBottomMat = Page.sharedEdgeMaterial;
+			edgeLeftMat = Page.sharedEdgeMaterial;
+			edgeRightMat = Page.sharedEdgeMaterial;
+		}
+
 		const materials = [
 			new THREE.MeshStandardMaterial(textures.back),
 			new THREE.MeshStandardMaterial(textures.front),
-			new THREE.MeshStandardMaterial(textures.edgeTop),
-			new THREE.MeshStandardMaterial(textures.edgeBottom),
-			new THREE.MeshStandardMaterial(textures.edgeRight),
-			new THREE.MeshStandardMaterial(textures.edgeLeft),
+			edgeTopMat,
+			edgeBottomMat,
+			edgeRightMat,
+			edgeLeftMat,
 		];
 
 		const geometry = new THREE.BoxGeometry(

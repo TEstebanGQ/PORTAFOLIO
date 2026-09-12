@@ -428,63 +428,65 @@ export default class Flipbook {
 		this.updateVerticalMode();
 		this.applySettings(params.settings || {}, true);
 
-		// Add fps counter
-		this.stats = new Stats();
-		this.stats.showPanel(0);
-		this.stats.dom.style.display = "none";
-		document.body.appendChild(this.stats.dom);
+		if (import.meta.env.DEV) {
+			// Add fps counter
+			this.stats = new Stats();
+			this.stats.showPanel(0);
+			this.stats.dom.style.display = "none";
+			document.body.appendChild(this.stats.dom);
 
-		this.datGui = new dat.GUI();
-		this.datGui.domElement.style.display = "none";
+			this.datGui = new dat.GUI();
+			this.datGui.domElement.style.display = "none";
 
-		const cameraFolder = this.datGui.addFolder("Camera");
-		cameraFolder.open();
-		cameraFolder.add(
-			this.settings,
-			"cameraAngle",
-			Math.PI / -2,
-			Math.PI / 2,
-		);
-		cameraFolder.add(this.settings, "cameraDistance", 0, 2);
-		cameraFolder.add(this.settings, "cameraFov", 1, 90);
+			const cameraFolder = this.datGui.addFolder("Camera");
+			cameraFolder.open();
+			cameraFolder.add(
+				this.settings,
+				"cameraAngle",
+				Math.PI / -2,
+				Math.PI / 2,
+			);
+			cameraFolder.add(this.settings, "cameraDistance", 0, 2);
+			cameraFolder.add(this.settings, "cameraFov", 1, 90);
 
-		const spotLightFolder = this.datGui.addFolder("Spot Light");
-		const spotLightPosFolder = spotLightFolder.addFolder("Position");
-		spotLightPosFolder.add(this.settings, "spotLightX", -1000, 1000);
-		spotLightPosFolder.add(this.settings, "spotLightY", -1000, 1000);
-		spotLightPosFolder.add(this.settings, "spotLightZ", 0, 2000);
-		spotLightFolder.addColor(this.settings, "spotLightColor");
-		spotLightFolder.add(this.settings, "spotLightIntensity", 0, 10000000);
-		spotLightFolder.add(this.settings, "spotLightAngle", 0, Math.PI);
-		spotLightFolder.add(this.settings, "spotLightPenumbra", 0, 1);
-		spotLightFolder.add(this.settings, "spotLightDecay", 0, 10);
-		spotLightFolder.add(this.settings, "spotLightNearClip", 1, 4000);
-		spotLightFolder.add(this.settings, "spotLightFarClip", 1, 4000);
-		spotLightFolder.add(this.settings, "spotLightMapSize", 0, 4096);
+			const spotLightFolder = this.datGui.addFolder("Spot Light");
+			const spotLightPosFolder = spotLightFolder.addFolder("Position");
+			spotLightPosFolder.add(this.settings, "spotLightX", -1000, 1000);
+			spotLightPosFolder.add(this.settings, "spotLightY", -1000, 1000);
+			spotLightPosFolder.add(this.settings, "spotLightZ", 0, 2000);
+			spotLightFolder.addColor(this.settings, "spotLightColor");
+			spotLightFolder.add(this.settings, "spotLightIntensity", 0, 10000000);
+			spotLightFolder.add(this.settings, "spotLightAngle", 0, Math.PI);
+			spotLightFolder.add(this.settings, "spotLightPenumbra", 0, 1);
+			spotLightFolder.add(this.settings, "spotLightDecay", 0, 10);
+			spotLightFolder.add(this.settings, "spotLightNearClip", 1, 4000);
+			spotLightFolder.add(this.settings, "spotLightFarClip", 1, 4000);
+			spotLightFolder.add(this.settings, "spotLightMapSize", 0, 4096);
 
-		const ambientLightFolder = this.datGui.addFolder("Ambient Light");
-		ambientLightFolder.addColor(this.settings, "ambientLightColor");
-		ambientLightFolder.add(this.settings, "ambientLightIntensity", 0, 1);
+			const ambientLightFolder = this.datGui.addFolder("Ambient Light");
+			ambientLightFolder.addColor(this.settings, "ambientLightColor");
+			ambientLightFolder.add(this.settings, "ambientLightIntensity", 0, 1);
 
-		const helpersFolder = this.datGui.addFolder("Helpers");
-		helpersFolder.add(this.settings, "showSpotLightHelper");
-		helpersFolder.add(this.settings, "showSpotShadowHelper");
-		helpersFolder.add(this.settings, "showPageCurveHelpers");
+			const helpersFolder = this.datGui.addFolder("Helpers");
+			helpersFolder.add(this.settings, "showSpotLightHelper");
+			helpersFolder.add(this.settings, "showSpotShadowHelper");
+			helpersFolder.add(this.settings, "showPageCurveHelpers");
 
-		const addChangeListeners = (gui: dat.GUI): void => {
-			gui.__controllers.forEach((controller: dat.GUIController) => {
-				controller.onChange((value: any) => {
-					this.applySettings({ [controller.property]: value });
+			const addChangeListeners = (gui: dat.GUI): void => {
+				gui.__controllers.forEach((controller: dat.GUIController) => {
+					controller.onChange((value: any) => {
+						this.applySettings({ [controller.property]: value });
+					});
 				});
-			});
 
-			for (const folderName in gui.__folders) {
-				if (gui.__folders.hasOwnProperty(folderName)) {
-					addChangeListeners(gui.__folders[folderName]);
+				for (const folderName in gui.__folders) {
+					if (gui.__folders.hasOwnProperty(folderName)) {
+						addChangeListeners(gui.__folders[folderName]);
+					}
 				}
-			}
-		};
-		addChangeListeners(this.datGui);
+			};
+			addChangeListeners(this.datGui);
+		}
 
 		// event listeners
 		window.addEventListener(

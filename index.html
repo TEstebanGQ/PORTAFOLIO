@@ -191,10 +191,12 @@
 				top: 0;
 				left: 0;
 				height: 100%;
-				width: 10%;
+				width: 100%;
+				transform-origin: left;
+				transform: scaleX(0.1);
 				background-color: white;
-				will-change: width;
-				transition-property: width;
+				will-change: transform;
+				transition-property: transform;
 				transition-duration: 400ms;
 				transition-timing-function: ease-out;
 				box-shadow:
@@ -226,7 +228,7 @@
 					<div class="logo-shine">
 						<img draggable="false" src="/img/logo-shine.png" alt="" width="512" height="512" loading="lazy" decoding="async" />
 					</div>
-					<img draggable="false" class="logo" src="/img/logo.png" fetchpriority="high" decoding="async" alt="Tomás Esteban Logo" width="206" height="206" />
+					<img draggable="false" class="logo" src="/img/logo.svg" fetchpriority="high" decoding="async" alt="Tomás Esteban Logo" width="206" height="206" />
 					<div class="progress">
 						<div class="progress-inner"></div>
 					</div>
