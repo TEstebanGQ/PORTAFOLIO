@@ -34,6 +34,26 @@ export default class Page {
 	private maxAnisotropy: number;
 	private isMobile: boolean;
 	private textureCache?: Map<string, THREE.Texture>;
+	private static readonly _v0 = new THREE.Vector2();
+	private static readonly _v1 = new THREE.Vector2();
+	private static readonly _v2 = new THREE.Vector2();
+	private static readonly _v3 = new THREE.Vector2();
+	private static readonly _dir = new THREE.Vector2();
+	private static readonly _perp = new THREE.Vector2();
+	private static readonly _posTarget = new THREE.Vector2();
+	private static readonly _tangentTarget = new THREE.Vector2();
+
+	private quadCurve = new THREE.QuadraticBezierCurve(
+		new THREE.Vector2(),
+		new THREE.Vector2(),
+		new THREE.Vector2(),
+	);
+	private cubicCurve = new THREE.CubicBezierCurve(
+		new THREE.Vector2(),
+		new THREE.Vector2(),
+		new THREE.Vector2(),
+		new THREE.Vector2(),
+	);
 	private static sharedEdgeMaterial: THREE.MeshLambertMaterial | null = null;
 
 	constructor(pageParams: PageParams) {
@@ -194,33 +214,35 @@ export default class Page {
 		uv.needsUpdate = true;
 	}
 
-	public getCurve() {
+	public getCurve(): THREE.Curve<THREE.Vector2> {
 		if (this.isCover) {
 			const backShift = this.rootThickness;
 			const leftShift =
 				(this.rootThickness / 2) * (this.isFrontCover ? 1 : -1);
 			const angle = (-this.turnProgress + 1) * (Math.PI / 2);
 
-			const direction = new THREE.Vector2(
-				Math.cos(angle),
-				Math.sin(angle),
-			);
+			Page._dir.set(Math.cos(angle), Math.sin(angle));
+			Page._perp.set(-Page._dir.y, Page._dir.x);
 
-			const perpendicular = new THREE.Vector2(-direction.y, direction.x);
+			Page._v0
+				.set(0, 0)
+				.addScaledVector(Page._dir, -backShift)
+				.addScaledVector(Page._perp, leftShift);
 
-			const p0 = new THREE.Vector2()
-				.addScaledVector(direction, -backShift)
-				.addScaledVector(perpendicular, leftShift);
+			Page._v2
+				.set(0, 0)
+				.addScaledVector(Page._dir, this.width - backShift)
+				.addScaledVector(Page._perp, leftShift);
 
-			const p2 = new THREE.Vector2()
-				.addScaledVector(direction, this.width - backShift)
-				.addScaledVector(perpendicular, leftShift);
-
-			const p1 = new THREE.Vector2()
-				.addVectors(p0, p2)
+			Page._v1
+				.addVectors(Page._v0, Page._v2)
 				.multiplyScalar(0.5);
 
-			return new THREE.QuadraticBezierCurve(p0, p1, p2);
+			this.quadCurve.v0.copy(Page._v0);
+			this.quadCurve.v1.copy(Page._v1);
+			this.quadCurve.v2.copy(Page._v2);
+
+			return this.quadCurve;
 		} else {
 			const piProgress = Math.abs(this.turnProgress) * (Math.PI / 2);
 			const eFactorSin = Math.sin(piProgress);
@@ -237,19 +259,23 @@ export default class Page {
 			// elevation of the 3rd and the 4th control points
 			const p34elev = eFactorCos * maxHeight;
 
-			// calculates positions for the 3rd and the 4th control points
-			const calcP34 = (tp: number, dist: number) =>
-				new THREE.Vector2(
-					Math.sin(tp * (Math.PI / 2)) * dist,
-					Math.cos(tp * (Math.PI / 2)) * dist + p34elev,
-				);
+			Page._v0.set(0, 0);
+			Page._v1.set(0, p2elev);
+			Page._v2.set(
+				Math.sin(this.turnProgress * (Math.PI / 2)) * (this.width * 0.5),
+				Math.cos(this.turnProgress * (Math.PI / 2)) * (this.width * 0.5) + p34elev,
+			);
+			Page._v3.set(
+				Math.sin(this.turnProgressLag * (Math.PI / 2)) * this.width,
+				Math.cos(this.turnProgressLag * (Math.PI / 2)) * this.width + p34elev,
+			);
 
-			const p0 = new THREE.Vector2();
-			const p1 = new THREE.Vector2(0, p2elev);
-			const p2 = calcP34(this.turnProgress, this.width * 0.5);
-			const p3 = calcP34(this.turnProgressLag, this.width);
+			this.cubicCurve.v0.copy(Page._v0);
+			this.cubicCurve.v1.copy(Page._v1);
+			this.cubicCurve.v2.copy(Page._v2);
+			this.cubicCurve.v3.copy(Page._v3);
 
-			return new THREE.CubicBezierCurve(p0, p1, p2, p3);
+			return this.cubicCurve;
 		}
 	}
 
@@ -274,14 +300,9 @@ export default class Page {
 		for (let i = 0; i < position.count; i++) {
 			const relCoord = this.vertexRelCoords[i];
 
-			// const pos = curve.getPoint(relCoord.z * (1 / curveStretch));
-			const pos = curve.getPointAt(relCoord.z * (1 / curveStretch));
-
-			// TODO: get direction from previous point?
-			// const direction =
-			// 	vectorToRadians(curve.getTangent(relCoord.z)) + Math.PI / 2;
-			const direction =
-				vectorToRadians(curve.getTangentAt(relCoord.z)) + Math.PI / 2;
+			const pos = curve.getPointAt(relCoord.z * (1 / curveStretch), Page._posTarget);
+			const tangent = curve.getTangentAt(relCoord.z, Page._tangentTarget);
+			const direction = vectorToRadians(tangent) + Math.PI / 2;
 
 			const thickness = lerp(
 				this.rootThickness,
@@ -309,12 +330,7 @@ export default class Page {
 
 	public needsUpdate() {
 		if (!this.hasTurnProgressUpdated) return true;
-		return (
-			(this.turnProgress !== 1 &&
-				this.turnProgress !== -1 &&
-				this.turnProgress !== 0) ||
-			Math.abs(this.turnProgress - this.turnProgressLag) > 0.01
-		);
+		return Math.abs(this.turnProgress - this.turnProgressLag) > 0.005;
 	}
 
 	public setTurnProgress(turnProgress: number, immediate: boolean = false) {

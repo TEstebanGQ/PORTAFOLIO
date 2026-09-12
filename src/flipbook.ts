@@ -910,18 +910,15 @@ export default class Flipbook {
 		bookAngle *= Math.PI / 2;
 		this.group.rotation.y = bookAngle;
 
-		// handle book rotation shift
-		const pivot = new THREE.Vector3(
-			this.spineWidth / 2,
-			0,
-			this.coverThickness,
-		);
-		if (bookAngle < 0) {
-			pivot.x = -pivot.x;
-		}
-		const newPoint = rotateY(new THREE.Vector3(0, 0, 0), pivot, -bookAngle);
-		this.group.position.x = newPoint.x;
-		this.group.position.z = newPoint.z;
+		// handle book rotation shift (zero allocations)
+		const pivotX = (bookAngle < 0 ? -this.spineWidth : this.spineWidth) / 2;
+		const pivotZ = this.coverThickness;
+		const cosA = Math.cos(-bookAngle);
+		const sinA = Math.sin(-bookAngle);
+		const transX = -pivotX;
+		const transZ = -pivotZ;
+		this.group.position.x = transX * cosA - transZ * sinA + pivotX;
+		this.group.position.z = transX * sinA + transZ * cosA + pivotZ;
 
 		if (!this.focusedActiveArea || this.isChangingFocus) {
 			this.render();
@@ -1484,10 +1481,9 @@ export default class Flipbook {
 		logoEl.style.opacity = currentOpacity;
 		logoEl.style.animation = "none";
 
-		// Trigger reflow to ensure the transition starts correctly
-		logoEl.offsetHeight; // Reading the offsetHeight forces reflow
-
-		logoEl.style.opacity = "1";
+		requestAnimationFrame(() => {
+			logoEl.style.opacity = "1";
+		});
 
 		await sleep(500); // let logo and progress settle
 
@@ -1809,10 +1805,24 @@ export default class Flipbook {
 		const backUrl = this.textureUrls.pages[pageIndex * 2 + 1];
 
 		try {
-			const [frontTex, backTex] = await Promise.all([
-				frontUrl ? this.loadTextureAsync(frontUrl) : Promise.resolve(null),
-				backUrl ? this.loadTextureAsync(backUrl) : Promise.resolve(null),
-			]);
+			let frontTex: THREE.Texture | null = null;
+			let backTex: THREE.Texture | null = null;
+
+			if (this.isMobile) {
+				// On mobile: load sequentially and yield between textures to avoid main thread spikes
+				if (frontUrl) {
+					frontTex = await this.loadTextureAsync(frontUrl);
+					await new Promise(resolve => setTimeout(resolve, 0));
+				}
+				if (backUrl) {
+					backTex = await this.loadTextureAsync(backUrl);
+				}
+			} else {
+				[frontTex, backTex] = await Promise.all([
+					frontUrl ? this.loadTextureAsync(frontUrl) : Promise.resolve(null),
+					backUrl ? this.loadTextureAsync(backUrl) : Promise.resolve(null),
+				]);
+			}
 
 			if (this.pages[pageIndex]) {
 				this.pages[pageIndex].updateTextures(

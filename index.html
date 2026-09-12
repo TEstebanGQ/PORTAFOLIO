@@ -720,7 +720,7 @@
 				<div class="intro-overlay">
 					<div class="centered-box">
 						<div class="logo-shine">
-							<img draggable="false" src="/img/logo-shine.png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+							<img draggable="false" src="/img/logo-shine.webp" alt="" width="512" height="512" loading="lazy" decoding="async" />
 						</div>
 						<img draggable="false" class="logo" src="/img/logo.svg" fetchpriority="high" decoding="async" alt="Tomás Esteban Logo" width="206" height="206" />
 						<div class="progress">
@@ -731,9 +731,20 @@
 			</div>
 		</main>
 		<script type="module" src="/src/main.ts"></script>
-		<script
-			async
-			src="https://scripts.simpleanalyticscdn.com/latest.js"
-		></script>
+		<script>
+			window.addEventListener("load", function () {
+				var loadAnalytics = function () {
+					var s = document.createElement("script");
+					s.async = true;
+					s.src = "https://scripts.simpleanalyticscdn.com/latest.js";
+					document.body.appendChild(s);
+				};
+				if ("requestIdleCallback" in window) {
+					window.requestIdleCallback(loadAnalytics, { timeout: 4000 });
+				} else {
+					setTimeout(loadAnalytics, 2500);
+				}
+			});
+		</script>
 	</body>
 </html>
