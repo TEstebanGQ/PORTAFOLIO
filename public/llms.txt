@@ -1,0 +1,19 @@
+# The Book of Tomás Esteban — Full Stack Developer & Architect Portfolio
+
+> Tomás Esteban González Quintero (TEGQ) is a Full Stack Developer and Systems Architect based in Bucaramanga, Colombia. Specializing in high-performance web systems, .NET 8, React Native, Three.js 3D WebGL, Supabase, n8n AI agent workflows, and distributed architectures.
+
+## Official Links
+
+- [Official Portfolio Website](https://portafolio.tomasestebangonzalezquintero.workers.dev/)
+- [GitHub Profile](https://github.com/TEstebanGQ)
+- [LinkedIn Profile](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/)
+- [WhatsApp Contact](https://wa.me/573167755887)
+
+## Featured Projects
+
+- [Campuslands Inteligente](https://github.com/TEstebanGQ/campuslands-inteligente): Intelligent campus automation system.
+- [LogiTrack WMS](https://github.com/TEstebanGQ/logitrack-wms-springboot): Enterprise Warehouse Management System built with Spring Boot.
+- [n8n Attendance AI Workflow](https://github.com/TEstebanGQ/n8n-attendance-ai-workflow): Automated facial recognition and AI attendance tracking.
+- [GitHub MCP Server](https://github.com/TEstebanGQ/github-mcp-server): Model Context Protocol server for seamless GitHub interactions.
+- [HelpDesk AI](https://github.com/TEstebanGQ/HelpDeskAI): Automated AI-powered IT ticketing and help desk system.
+- [3D Interactive Portfolio](https://github.com/TEstebanGQ/PORTAFOLIO): High-performance Three.js WebGL 3D book portfolio.

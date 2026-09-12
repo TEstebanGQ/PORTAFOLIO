@@ -202,9 +202,24 @@
 					0 0 20px rgba(255, 255, 255, 0.6),
 					0 0 30px rgba(255, 255, 255, 0.6);
 			}
+			.sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
 		</style>
 	</head>
 	<body>
+		<header class="sr-only">
+			<h1>The Book of Tomás Esteban — Full Stack Developer &amp; Architect</h1>
+			<p>Interactive 3D Book Portfolio featuring projects, skills, system architecture, and experience of Tomás Esteban González Quintero.</p>
+		</header>
 		<div id="flipbook-container">
 			<div class="intro-overlay">
 				<div class="centered-box">

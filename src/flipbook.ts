@@ -233,7 +233,7 @@ export default class Flipbook {
 		this.wrapperLinkEl = document.createElement("a");
 		this.wrapperLinkEl.draggable = false;
 		this.wrapperLinkEl.classList.add("wrapper-link");
-		this.wrapperLinkEl.setAttribute("role", "presentation");
+		this.wrapperLinkEl.setAttribute("role", "region");
 		this.wrapperLinkEl.setAttribute("aria-label", "Interactive 3D Book");
 		this.containerEl.appendChild(this.wrapperLinkEl);
 		this.wrapperLinkEl.appendChild(this.renderer.domElement);
@@ -1469,11 +1469,7 @@ export default class Flipbook {
 			if (this.introOverlay?.dom?.container) {
 				this.introOverlay.dom.container.style.transition = "opacity 300ms ease-out";
 				this.introOverlay.dom.container.style.opacity = "0";
-				setTimeout(() => {
-					if (this.introOverlay?.dom?.container) {
-						this.introOverlay.dom.container.style.display = "none";
-					}
-				}, 300);
+				this.introOverlay.dom.container.style.pointerEvents = "none";
 			}
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
 			return;
@@ -1533,7 +1529,10 @@ export default class Flipbook {
 		} finally {
 			this.spotLight.intensity = spotLightIntensity;
 			this.ambientLight.intensity = ambientLightIntensity;
-			this.introOverlay.dom.container.style.display = "none";
+			if (this.introOverlay?.dom?.container) {
+				this.introOverlay.dom.container.style.opacity = "0";
+				this.introOverlay.dom.container.style.pointerEvents = "none";
+			}
 			this.updateCursor();
 			this.introPhase = "COMPLETED";
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
@@ -1546,7 +1545,8 @@ export default class Flipbook {
 		this.spotLight.intensity = this.settings.spotLightIntensity;
 		this.ambientLight.intensity = this.settings.ambientLightIntensity;
 		if (this.introOverlay?.dom?.container) {
-			this.introOverlay.dom.container.style.display = "none";
+			this.introOverlay.dom.container.style.opacity = "0";
+			this.introOverlay.dom.container.style.pointerEvents = "none";
 		}
 		if (this.progress.getValue() === 0) {
 			this.progress.setValue(1);
@@ -1590,7 +1590,10 @@ export default class Flipbook {
 		]);
 
 		if (this.introPhase === "ANIMATING") {
-			this.introOverlay.dom.container.style.display = "none";
+			if (this.introOverlay?.dom?.container) {
+				this.introOverlay.dom.container.style.opacity = "0";
+				this.introOverlay.dom.container.style.pointerEvents = "none";
+			}
 			this.updateCursor();
 			this.introPhase = "COMPLETED";
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
