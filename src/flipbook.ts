@@ -140,7 +140,9 @@ export default class Flipbook {
 			introStarted = true;
 			this.introOverlay.onProgress(1);
 			this.playIntro();
-			this.loadRemainingPagesInBackground();
+			this.onIntroCompleted(() => {
+				this.loadRemainingPagesInBackground();
+			});
 		};
 
 		const skipIntro = () => {
@@ -200,7 +202,7 @@ export default class Flipbook {
 		// this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		// this.renderer.toneMappingExposure = 1.2;
 		this.renderer.setPixelRatio(
-			Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 2),
+			Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 1.75),
 		);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.renderer.shadowMap.enabled = !this.isMobile;
@@ -1705,7 +1707,15 @@ export default class Flipbook {
 	private async loadRemainingPagesInBackground(): Promise<void> {
 		const totalPages = this.pages.length;
 		for (let i = 2; i < totalPages; i++) {
+			while (
+				this.pageTurnTween ||
+				this.isTurning() ||
+				this.introPhase !== "COMPLETED"
+			) {
+				await sleep(150);
+			}
 			await this.ensurePageLoaded(i);
+			await sleep(100);
 		}
 	}
 }
