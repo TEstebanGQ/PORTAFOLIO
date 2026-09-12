@@ -309,7 +309,7 @@ export default class Page {
 			(this.turnProgress !== 1 &&
 				this.turnProgress !== -1 &&
 				this.turnProgress !== 0) ||
-			Math.abs(this.turnProgress - this.turnProgressLag) > 0.001
+			Math.abs(this.turnProgress - this.turnProgressLag) > 0.01
 		);
 	}
 
@@ -323,6 +323,12 @@ export default class Page {
 
 		this.turnProgress = turnProgress;
 		this.hasTurnProgressUpdated = false;
+	}
+
+	/** Immediately snaps the spring physics to the target — stops the render loop. */
+	public settleImmediately(): void {
+		this.turnProgressLag = this.turnProgress;
+		this.hasTurnProgressUpdated = true;
 	}
 
 	public setElevation(elevationLeft: number, elevationRight: number) {

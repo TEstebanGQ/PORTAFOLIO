@@ -204,7 +204,7 @@ export default class Flipbook {
 		// this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		// this.renderer.toneMappingExposure = 1.2;
 		this.renderer.setPixelRatio(
-			Math.min(window.devicePixelRatio, this.isMobile ? 1.5 : 1.75),
+			Math.min(window.devicePixelRatio, this.isMobile ? 1 : 1.5),
 		);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.renderer.shadowMap.enabled = !this.isMobile;
@@ -738,6 +738,12 @@ export default class Flipbook {
 		let previousTime = performance.now();
 
 		const animate = ((currentTime: number) => {
+			// Skip rendering when tab is hidden — saves GPU + main thread
+			if (document.hidden) {
+				previousTime = currentTime;
+				requestAnimationFrame(animate);
+				return;
+			}
 			let dt = (currentTime - previousTime) / 1000;
 			previousTime = currentTime;
 
@@ -885,8 +891,14 @@ export default class Flipbook {
 			);
 
 			if (page.needsUpdate()) {
-				page.update(dt);
-				this.pageHelpers[index]?.update();
+				const distFromCurrent = Math.abs(index - this.progress.getValue());
+				if (distFromCurrent > 2) {
+					// Page is far off-screen: snap physics instead of computing
+					page.settleImmediately();
+				} else {
+					page.update(dt);
+					this.pageHelpers[index]?.update();
+				}
 			}
 		});
 
@@ -1528,6 +1540,11 @@ export default class Flipbook {
 			this.updateCursor();
 			this.introPhase = "COMPLETED";
 			this.isDirty = false;
+			// Snap spring physics on all off-screen pages so the render loop stops immediately
+			const currentP = Math.round(this.progress.getValue());
+			this.pages.forEach((page, i) => {
+				if (Math.abs(i - currentP) > 1) page.settleImmediately();
+			});
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
 			setTimeout(() => this.startBackgroundPreload(), 4000);
 		}
@@ -1552,6 +1569,11 @@ export default class Flipbook {
 		this.update(1);
 		this.updateCursor();
 		this.isDirty = false;
+		// Snap spring physics so the render loop stops at the next frame
+		const currentP = Math.round(this.progress.getValue());
+		this.pages.forEach((page, i) => {
+			if (Math.abs(i - currentP) > 1) page.settleImmediately();
+		});
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
 		setTimeout(() => this.startBackgroundPreload(), 4000);
 	}
