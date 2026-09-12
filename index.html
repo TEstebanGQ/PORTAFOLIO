@@ -5,7 +5,7 @@
 		<title>The Book of Tomás Esteban // Full Stack Developer & Architect</title>
 		<meta
 			name="viewport"
-			content="width=device-width, initial-scale=1.0, user-scalable=no"
+			content="width=device-width, initial-scale=1.0"
 		/>
 
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -30,9 +30,17 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
+			rel="preload"
 			href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:wght@600&display=swap"
-			rel="stylesheet"
+			as="style"
+			onload="this.onload=null;this.rel='stylesheet'"
 		/>
+		<noscript>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:wght@600&display=swap"
+				rel="stylesheet"
+			/>
+		</noscript>
 
 		<meta
 			name="description"
@@ -195,9 +203,9 @@
 			<div class="intro-overlay">
 				<div class="centered-box">
 					<div class="logo-shine">
-						<img draggable="false" src="/img/logo-shine.png" />
+						<img draggable="false" src="/img/logo-shine.png" alt="" width="512" height="512" />
 					</div>
-					<img draggable="false" class="logo" src="/img/logo.png" />
+					<img draggable="false" class="logo" src="/img/logo.png" fetchpriority="high" alt="Tomás Esteban Logo" width="256" height="256" />
 					<div class="progress">
 						<div class="progress-inner"></div>
 					</div>

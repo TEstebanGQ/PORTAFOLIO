@@ -100,6 +100,7 @@ export default class Flipbook {
 
 	private loadedPageIndices: Set<number> = new Set();
 	private loadingPageIndices: Set<number> = new Set();
+	private preloadNextPageTimeout: number | null = null;
 	private bgTextureLoader: THREE.TextureLoader = new THREE.TextureLoader(
 		new THREE.LoadingManager(),
 	);
@@ -141,7 +142,8 @@ export default class Flipbook {
 			this.introOverlay.onProgress(1);
 			this.playIntro();
 			this.onIntroCompleted(() => {
-				this.loadRemainingPagesInBackground();
+				const current = Math.round(this.progress.getValue());
+				this.schedulePredictivePreload(current);
 			});
 		};
 
@@ -231,7 +233,8 @@ export default class Flipbook {
 		this.wrapperLinkEl = document.createElement("a");
 		this.wrapperLinkEl.draggable = false;
 		this.wrapperLinkEl.classList.add("wrapper-link");
-		this.wrapperLinkEl.setAttribute("target", "_blank");
+		this.wrapperLinkEl.setAttribute("role", "presentation");
+		this.wrapperLinkEl.setAttribute("aria-label", "Interactive 3D Book");
 		this.containerEl.appendChild(this.wrapperLinkEl);
 		this.wrapperLinkEl.appendChild(this.renderer.domElement);
 
@@ -595,9 +598,7 @@ export default class Flipbook {
 			({ newValue: progress }: ValueChangeEvent) => {
 				this.onProgressChangeCallbacks.forEach(cb => cb(progress));
 				const current = Math.round(progress);
-				this.ensurePageLoaded(current);
-				this.ensurePageLoaded(current + 1);
-				this.ensurePageLoaded(current - 1);
+				this.schedulePredictivePreload(current);
 				if (this.isVerticalMode) {
 					if (this.isTurning()) {
 						const tp = progress - this.getTurningPage()!;
@@ -663,8 +664,13 @@ export default class Flipbook {
 		this.wrapperLinkEl.title = title;
 		if (href) {
 			this.wrapperLinkEl.setAttribute("href", href);
+			this.wrapperLinkEl.setAttribute("target", "_blank");
+			this.wrapperLinkEl.setAttribute("rel", "noopener noreferrer");
+			this.wrapperLinkEl.removeAttribute("role");
 		} else {
 			this.wrapperLinkEl.removeAttribute("href");
+			this.wrapperLinkEl.removeAttribute("target");
+			this.wrapperLinkEl.setAttribute("role", "presentation");
 		}
 	}
 
@@ -1508,9 +1514,10 @@ export default class Flipbook {
 		if (this.introPhase === "LOADING") return;
 
 		const targetPage = Math.round(targetProgress);
-		this.ensurePageLoaded(targetPage);
-		this.ensurePageLoaded(targetPage + 1);
-		this.ensurePageLoaded(targetPage - 1);
+		await Promise.all([
+			this.ensurePageLoaded(targetPage),
+			this.ensurePageLoaded(targetPage + 1),
+		]);
 
 		if (this.introPhase === "ANIMATING") {
 			this.introOverlay.dom.container.style.display = "none";
@@ -1704,18 +1711,17 @@ export default class Flipbook {
 		}
 	}
 
-	private async loadRemainingPagesInBackground(): Promise<void> {
-		const totalPages = this.pages.length;
-		for (let i = 2; i < totalPages; i++) {
-			while (
-				this.pageTurnTween ||
-				this.isTurning() ||
-				this.introPhase !== "COMPLETED"
-			) {
-				await sleep(150);
-			}
-			await this.ensurePageLoaded(i);
-			await sleep(100);
+	private schedulePredictivePreload(currentPage: number) {
+		if (this.preloadNextPageTimeout) {
+			window.clearTimeout(this.preloadNextPageTimeout);
 		}
+		this.preloadNextPageTimeout = window.setTimeout(() => {
+			if (this.introPhase === "COMPLETED" && !this.isTurning() && !this.pageTurnTween) {
+				const nextPageIndex = currentPage + 1;
+				if (nextPageIndex < this.pages.length && !this.loadedPageIndices.has(nextPageIndex)) {
+					this.ensurePageLoaded(nextPageIndex);
+				}
+			}
+		}, 600);
 	}
 }
