@@ -872,7 +872,9 @@ export default class Flipbook {
 			// }
 
 			let tp;
-			if (index >= this.progress.getValue()) {
+			if (this.introPhase === "ANIMATING" && index > 1) {
+				tp = 1;
+			} else if (index >= this.progress.getValue()) {
 				tp = bookOpenFactor;
 			} else if (index < Math.floor(this.progress.getValue())) {
 				tp = -bookOpenFactor;
@@ -1345,23 +1347,25 @@ export default class Flipbook {
 
 	private async playIntro() {
 		const transitionToBottomView = async (durationMs: number) => {
-			const animation = { progress: 0 };
-			await gsap.to(animation, {
-				progress: 1,
-				duration: durationMs / 1000,
+			const bottomViewRect = this.getBaseViewRect(bottomViewSettings);
+			const target = this.getCameraPos(bottomViewRect);
+			const dur = durationMs / 1000;
+			const pTween = gsap.to(this.camera.position, {
+				x: target.position.x,
+				y: target.position.y,
+				z: target.position.z,
+				duration: dur,
 				ease: "power2.inOut",
-				onUpdate: () => {
-					const bottomViewRect =
-						this.getBaseViewRect(bottomViewSettings);
-					this.watchArea(
-						lerpRectangles(
-							logoCorners,
-							bottomViewRect,
-							animation.progress,
-						),
-					);
-				},
 			});
+			const qTween = gsap.to(this.camera.quaternion, {
+				x: target.rotation.x,
+				y: target.rotation.y,
+				z: target.rotation.z,
+				w: target.rotation.w,
+				duration: dur,
+				ease: "power2.inOut",
+			});
+			await Promise.all([pTween, qTween]);
 		};
 
 		const openFirstPage = async (durationMs: number) => {
@@ -1386,21 +1390,27 @@ export default class Flipbook {
 		};
 
 		const transitionRaise = async (durationMs: number) => {
-			// temporarily apply bottom view settings and gradually raise to
-			// the base position
 			const originalSettings = { ...this.settings };
-			this.settings.cameraAngle = bottomViewSettings.cameraAngle;
-			this.settings.cameraDistance = bottomViewSettings.cameraDistance;
-
-			await gsap.to(this.settings, {
-				cameraDistance: originalSettings.cameraDistance,
-				cameraAngle: originalSettings.cameraAngle,
-				duration: durationMs / 1000,
+			const target = this.getCameraPos(this.getBaseViewRect(originalSettings));
+			const dur = durationMs / 1000;
+			const pTween = gsap.to(this.camera.position, {
+				x: target.position.x,
+				y: target.position.y,
+				z: target.position.z,
+				duration: dur,
 				ease: "power2.inOut",
-				onUpdate: () => {
-					this.restoreCamera();
-				},
 			});
+			const qTween = gsap.to(this.camera.quaternion, {
+				x: target.rotation.x,
+				y: target.rotation.y,
+				z: target.rotation.z,
+				w: target.rotation.w,
+				duration: dur,
+				ease: "power2.inOut",
+			});
+			await Promise.all([pTween, qTween]);
+			this.settings.cameraDistance = originalSettings.cameraDistance;
+			this.settings.cameraAngle = originalSettings.cameraAngle;
 		};
 
 		async function animateLogoFlash(durationMs: number): Promise<void> {
@@ -1489,6 +1499,13 @@ export default class Flipbook {
 
 		// perform initial setup
 		this.update(1);
+
+		// Pre-settle resting pages (2..N) to open pose so they don't calculate during intro
+		for (let i = 2; i < this.pages.length; i++) {
+			this.pages[i].setTurnProgress(1, true);
+			this.pages[i].update(0);
+			this.pages[i].settleImmediately();
+		}
 
 		// prepare camera for intro animation
 		const logoArea: PageArea = {
