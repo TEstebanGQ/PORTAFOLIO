@@ -309,10 +309,12 @@ function init() {
 		pageActiveAreas: getActiveAreas(initialLang, pageWidth, pageHeight),
 	});
 
-	const nav = initChaptersNav(window.flipbook);
-	nav.onLanguageChange(newLang => {
-		window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
-		window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
+	window.flipbook.onIntroCompleted(() => {
+		const nav = initChaptersNav(window.flipbook);
+		nav.onLanguageChange(newLang => {
+			window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
+			window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
+		});
 	});
 }
 
