@@ -691,16 +691,58 @@ export default class Flipbook {
 		return delta / -500; // TODO:
 	}
 
+	private isDirty = true;
+
+	public requestRender(): void {
+		this.isDirty = true;
+	}
+
+	private shouldRender(): boolean {
+		if (this.introPhase === "ANIMATING") return true;
+		if (this.introPhase === "LOADING") return false;
+		if (this.pageTurnTween !== null) return true;
+		if (this.isTurning() || !this.progress.isSettled()) return true;
+		if (this.isShifting() || !this.cameraSideShift.isSettled()) return true;
+		if (this.isChangingFocus) return true;
+		if (this.isDirty) return true;
+		for (let i = 0; i < this.pages.length; i++) {
+			if (this.pages[i].needsUpdate()) return true;
+		}
+		return false;
+	}
+
 	private runAnimation() {
 		let previousTime = performance.now();
 
 		const animate = ((currentTime: number) => {
 			let dt = (currentTime - previousTime) / 1000;
 			previousTime = currentTime;
-			this.stats.begin();
-			this.update(dt);
-			this.stats.end();
-			this.controls?.update?.();
+
+			if (this.shouldRender()) {
+				this.stats?.begin?.();
+				this.update(dt);
+				this.stats?.end?.();
+				this.controls?.update?.();
+
+				if (
+					this.introPhase === "COMPLETED" &&
+					!this.pageTurnTween &&
+					this.progress.isSettled() &&
+					this.cameraSideShift.isSettled() &&
+					!this.isChangingFocus
+				) {
+					let anyPageNeedsUpdate = false;
+					for (let i = 0; i < this.pages.length; i++) {
+						if (this.pages[i].needsUpdate()) {
+							anyPageNeedsUpdate = true;
+							break;
+						}
+					}
+					if (!anyPageNeedsUpdate) {
+						this.isDirty = false;
+					}
+				}
+			}
 
 			requestAnimationFrame(animate);
 		}).bind(this);
@@ -709,6 +751,7 @@ export default class Flipbook {
 	}
 
 	private onSwipeMove(swipe: Swipe) {
+		this.isDirty = true;
 		const deltaX = swipe.x - swipe.prevX;
 		if (!deltaX) return;
 		const progressDelta = this.swipeDeltaToProgress(deltaX);

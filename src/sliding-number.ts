@@ -37,6 +37,7 @@ export default class SlidingNumber extends EventEmitter {
 
 	private update(dt: number) {
 		if (!dt) return;
+		if (!this.nudgeDelta && !this.inertia && (!this.gravity || this.locked)) return;
 
 		if (this.nudgeDelta) {
 			this.inertia =
