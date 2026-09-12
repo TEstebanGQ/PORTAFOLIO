@@ -891,14 +891,8 @@ export default class Flipbook {
 			);
 
 			if (page.needsUpdate()) {
-				const distFromCurrent = Math.abs(index - this.progress.getValue());
-				if (distFromCurrent > 2) {
-					// Page is far off-screen: snap physics instead of computing
-					page.settleImmediately();
-				} else {
-					page.update(dt);
-					this.pageHelpers[index]?.update();
-				}
+				page.update(dt);
+				this.pageHelpers[index]?.update();
 			}
 		});
 
@@ -1541,9 +1535,13 @@ export default class Flipbook {
 			this.introPhase = "COMPLETED";
 			this.isDirty = false;
 			// Snap spring physics on all off-screen pages so the render loop stops immediately
+			// update(0) first to initialize geometry without advancing physics
 			const currentP = Math.round(this.progress.getValue());
 			this.pages.forEach((page, i) => {
-				if (Math.abs(i - currentP) > 1) page.settleImmediately();
+				if (Math.abs(i - currentP) > 1) {
+					if (!page.hasTurnProgressUpdated) page.update(0);
+					page.settleImmediately();
+				}
 			});
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
 			setTimeout(() => this.startBackgroundPreload(), 4000);
@@ -1570,9 +1568,13 @@ export default class Flipbook {
 		this.updateCursor();
 		this.isDirty = false;
 		// Snap spring physics so the render loop stops at the next frame
+		// update(0) first to initialize geometry without advancing physics
 		const currentP = Math.round(this.progress.getValue());
 		this.pages.forEach((page, i) => {
-			if (Math.abs(i - currentP) > 1) page.settleImmediately();
+			if (Math.abs(i - currentP) > 1) {
+				if (!page.hasTurnProgressUpdated) page.update(0);
+				page.settleImmediately();
+			}
 		});
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
 		setTimeout(() => this.startBackgroundPreload(), 4000);

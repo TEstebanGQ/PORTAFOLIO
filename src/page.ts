@@ -30,7 +30,7 @@ export default class Page {
 	public bendingEnabled: boolean = true;
 	private textureLoader: THREE.TextureLoader;
 	private isFrontCover: boolean;
-	private hasTurnProgressUpdated = false;
+	public hasTurnProgressUpdated = false;
 	private maxAnisotropy: number;
 	private isMobile: boolean;
 	private textureCache?: Map<string, THREE.Texture>;
