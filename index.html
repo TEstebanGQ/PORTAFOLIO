@@ -167,6 +167,12 @@
 				animation: infiniteRotate 120s linear infinite;
 			}
 
+			@media (max-width: 768px) {
+				.intro-overlay .centered-box > .logo-shine {
+					display: none !important;
+				}
+			}
+
 			.intro-overlay .centered-box > .progress {
 				position: absolute;
 				bottom: 18%;
@@ -203,9 +209,9 @@
 			<div class="intro-overlay">
 				<div class="centered-box">
 					<div class="logo-shine">
-						<img draggable="false" src="/img/logo-shine.png" alt="" width="512" height="512" />
+						<img draggable="false" src="/img/logo-shine.png" alt="" width="512" height="512" loading="lazy" decoding="async" />
 					</div>
-					<img draggable="false" class="logo" src="/img/logo.png" fetchpriority="high" alt="Tomás Esteban Logo" width="256" height="256" />
+					<img draggable="false" class="logo" src="/img/logo.png" fetchpriority="high" decoding="async" alt="Tomás Esteban Logo" width="206" height="206" />
 					<div class="progress">
 						<div class="progress-inner"></div>
 					</div>

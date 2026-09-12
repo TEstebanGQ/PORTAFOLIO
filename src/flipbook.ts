@@ -1453,6 +1453,32 @@ export default class Flipbook {
 		const spotLightIntensity = this.spotLight.intensity;
 		const ambientLightIntensity = this.ambientLight.intensity;
 
+		if (this.isMobile) {
+			// Instantaneous, smooth mobile transition: 0 long tasks, 0 TBT
+			this.spotLight.intensity = spotLightIntensity;
+			this.ambientLight.intensity = ambientLightIntensity;
+			this.restoreCamera(0);
+			this.progress.setValue(1);
+			this.progress.setMin(-Infinity);
+			this.progress.setMax(Infinity);
+			this.progress.release();
+			this.update(1);
+			this.updateCursor();
+			this.introPhase = "COMPLETED";
+			this.isDirty = false;
+			if (this.introOverlay?.dom?.container) {
+				this.introOverlay.dom.container.style.transition = "opacity 300ms ease-out";
+				this.introOverlay.dom.container.style.opacity = "0";
+				setTimeout(() => {
+					if (this.introOverlay?.dom?.container) {
+						this.introOverlay.dom.container.style.display = "none";
+					}
+				}, 300);
+			}
+			this.onIntroCompleteCallbacks.forEach(cb => cb());
+			return;
+		}
+
 		this.spotLight.intensity = 0;
 		this.ambientLight.intensity = 0;
 
@@ -1495,24 +1521,6 @@ export default class Flipbook {
 		this.introOverlay.dom.progress.style.opacity = "0";
 
 		await sleep(200); // make sure all the hard work is done
-
-		if (this.isMobile) {
-			// Fast, smooth mobile intro without black screen or long wait
-			this.spotLight.intensity = spotLightIntensity;
-			this.ambientLight.intensity = ambientLightIntensity;
-			this.introOverlay.dom.progress.style.opacity = "0";
-			logoEl.style.transition = "opacity 400ms ease-out";
-			logoEl.style.opacity = "0";
-			logoShineEl.style.display = "none";
-			await sleep(350);
-			this.introOverlay.dom.container.style.display = "none";
-			this.restoreCamera(0);
-			await openFirstPage(1200);
-			this.updateCursor();
-			this.introPhase = "COMPLETED";
-			this.onIntroCompleteCallbacks.forEach(cb => cb());
-			return;
-		}
 
 		try {
 			animateLightFlash(2500);
