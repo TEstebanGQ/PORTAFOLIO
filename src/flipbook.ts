@@ -622,8 +622,13 @@ export default class Flipbook {
 						);
 					}
 				}
+				this.requestRender();
 			},
 		);
+
+		this.cameraSideShift.addCallback("valueChange", () => {
+			this.requestRender();
+		});
 	}
 
 	private updateCursor() {
@@ -692,9 +697,13 @@ export default class Flipbook {
 	}
 
 	private isDirty = true;
+	private isLoopRunning = false;
 
 	public requestRender(): void {
 		this.isDirty = true;
+		if (!this.isLoopRunning && this.introPhase !== "LOADING") {
+			this.runAnimation();
+		}
 	}
 
 	private shouldRender(): boolean {
@@ -712,6 +721,8 @@ export default class Flipbook {
 	}
 
 	private runAnimation() {
+		if (this.isLoopRunning) return;
+		this.isLoopRunning = true;
 		let previousTime = performance.now();
 
 		const animate = ((currentTime: number) => {
@@ -742,12 +753,13 @@ export default class Flipbook {
 						this.isDirty = false;
 					}
 				}
+				requestAnimationFrame(animate);
+			} else {
+				this.isLoopRunning = false;
 			}
-
-			requestAnimationFrame(animate);
 		}).bind(this);
 
-		animate(performance.now());
+		requestAnimationFrame(animate);
 	}
 
 	private onSwipeMove(swipe: Swipe) {
@@ -1346,6 +1358,9 @@ export default class Flipbook {
 					this.progress.setValue(animation.progress);
 				},
 				onComplete: () => {
+					this.progress.setValue(1);
+					this.progress.setMin(-Infinity);
+					this.progress.setMax(Infinity);
 					this.progress.release();
 				},
 			});
@@ -1527,9 +1542,13 @@ export default class Flipbook {
 		}
 		if (this.progress.getValue() === 0) {
 			this.progress.setValue(1);
+			this.progress.setMin(-Infinity);
+			this.progress.setMax(Infinity);
+			this.progress.release();
 		}
 		this.restoreCamera(0);
 		this.updateCursor();
+		this.requestRender();
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
 	}
 
@@ -1590,6 +1609,7 @@ export default class Flipbook {
 		const duration = Math.min(Math.max(distance * 0.28, 0.7), 2.2);
 
 		const animation = { progress: start };
+		this.requestRender();
 		return new Promise<void>(resolve => {
 			this.pageTurnTween = gsap.to(animation, {
 				progress: targetProgress,
@@ -1600,10 +1620,11 @@ export default class Flipbook {
 				},
 				onComplete: () => {
 					this.progress.setValue(targetProgress);
-					this.progress.setMin(targetProgress);
-					this.progress.setMax(targetProgress);
+					this.progress.setMin(-Infinity);
+					this.progress.setMax(Infinity);
 					this.progress.release();
 					this.pageTurnTween = null;
+					this.requestRender();
 					resolve();
 				},
 			});

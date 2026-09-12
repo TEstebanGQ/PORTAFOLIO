@@ -32,12 +32,12 @@ export default class SlidingNumber extends EventEmitter {
 		this.locked = false;
 		this.dampenDistance = dampenDistance;
 		this.gravity = gravity;
-		this.runAnimation();
+		this.requestAnimation();
 	}
 
 	private update(dt: number) {
 		if (!dt) return;
-		if (!this.nudgeDelta && !this.inertia && (!this.gravity || this.locked)) return;
+		if (!this.nudgeDelta && Math.abs(this.inertia) < 0.0001 && (!this.gravity || this.locked || this.isSettled())) return;
 
 		if (this.nudgeDelta) {
 			this.inertia =
@@ -48,7 +48,7 @@ export default class SlidingNumber extends EventEmitter {
 		}
 
 		// applying gravity
-		if (!this.locked && this.gravity && this.hasLimits()) {
+		if (!this.locked && this.gravity && this.hasLimits() && !this.isSettled()) {
 			const valuePos = inverseLerp(
 				this.minValue,
 				this.maxValue,
@@ -99,10 +99,10 @@ export default class SlidingNumber extends EventEmitter {
 			const prevValue = this.value;
 			this.value += deltaValue;
 
-			if (this.value < this.minValue) {
+			if (this.value <= this.minValue || Math.abs(this.value - this.minValue) < 0.001) {
 				this.value = this.minValue;
 				this.inertia = 0;
-			} else if (this.value > this.maxValue) {
+			} else if (this.value >= this.maxValue || Math.abs(this.value - this.maxValue) < 0.001) {
 				this.value = this.maxValue;
 				this.inertia = 0;
 			}
@@ -121,7 +121,11 @@ export default class SlidingNumber extends EventEmitter {
 		}
 	}
 
-	private runAnimation() {
+	private isLoopRunning = false;
+
+	public requestAnimation() {
+		if (this.isLoopRunning) return;
+		this.isLoopRunning = true;
 		let previousTime = performance.now();
 
 		const animate = ((currentTime: number) => {
@@ -129,28 +133,36 @@ export default class SlidingNumber extends EventEmitter {
 			previousTime = currentTime;
 			this.update(dt);
 
-			requestAnimationFrame(animate);
+			if (this.isSettled() && !this.nudgeDelta && Math.abs(this.inertia) < 0.0001) {
+				this.isLoopRunning = false;
+			} else {
+				requestAnimationFrame(animate);
+			}
 		}).bind(this);
 
-		animate(performance.now());
+		requestAnimationFrame(animate);
 	}
 
 	public nudge(amount: number): void {
 		const prevValue = this.value;
 		this.setValue(this.value + amount);
 		this.nudgeDelta += this.value - prevValue;
+		this.requestAnimation();
 	}
 
 	public setMin(minValue: number): void {
 		this.minValue = minValue;
+		this.requestAnimation();
 	}
 
 	public setMax(maxValue: number): void {
 		this.maxValue = maxValue;
+		this.requestAnimation();
 	}
 
 	public lock(): void {
 		this.locked = true;
+		this.requestAnimation();
 	}
 
 	public release(): void {
@@ -158,6 +170,7 @@ export default class SlidingNumber extends EventEmitter {
 		if (this.isSettled()) {
 			this.triggerEvent("settled");
 		}
+		this.requestAnimation();
 	}
 
 	private hasLimits() {
@@ -166,12 +179,12 @@ export default class SlidingNumber extends EventEmitter {
 
 	public isSettled(): boolean {
 		if (this.locked) return false;
-		if (this.inertia) return false;
+		if (Math.abs(this.inertia) > 0.0001) return false;
 		if (this.gravity && this.hasLimits()) {
-			const isOnLimit = [this.minValue, this.maxValue].includes(
-				this.value,
+			return (
+				Math.abs(this.value - this.minValue) < 0.001 ||
+				Math.abs(this.value - this.maxValue) < 0.001
 			);
-			return isOnLimit;
 		} else {
 			return true;
 		}
@@ -180,6 +193,7 @@ export default class SlidingNumber extends EventEmitter {
 	public setValue(newValue: number) {
 		this.value = clamp(newValue, this.minValue, this.maxValue);
 		this.triggerEvent("valueChange", [{ newValue: this.value }]);
+		this.requestAnimation();
 	}
 
 	public getValue(): number {

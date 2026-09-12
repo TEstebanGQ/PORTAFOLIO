@@ -314,10 +314,6 @@ function init() {
 		window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
 		window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
 	});
-
-	// Preload alternate language textures in background to ensure zero lag and zero flicker
-	const alternateLang = initialLang === "es" ? "en" : "es";
-	window.flipbook.preloadTextures(getPageTextureUrls(alternateLang, _url));
 }
 
 if (document.readyState === "loading") {
