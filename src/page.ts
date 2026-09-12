@@ -53,7 +53,8 @@ export default class Page {
 		if (this.isCover) {
 			this.zSegments = 1;
 		} else if (this.isMobile) {
-			this.zSegments = 3;
+			// 1 segment = flat (no bending curves), renders 3× faster on mobile
+			this.zSegments = 1;
 		}
 
 		// Load front and back textures
@@ -296,9 +297,12 @@ export default class Page {
 		}
 
 		position.needsUpdate = true;
-		// TODO: calculate normals manually?
-		this.mesh.geometry.computeVertexNormals();
-		this.mesh.geometry.computeBoundingSphere();
+		// On mobile, skip expensive normal/bounds recalc — Lambert material
+		// does not need per-vertex normals for correct flat-shading on phones.
+		if (!this.isMobile) {
+			this.mesh.geometry.computeVertexNormals();
+			this.mesh.geometry.computeBoundingSphere();
+		}
 
 		this.hasTurnProgressUpdated = true;
 	}
