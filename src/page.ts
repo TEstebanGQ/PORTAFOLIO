@@ -305,16 +305,16 @@ export default class Page {
 			(this.turnProgress !== 1 &&
 				this.turnProgress !== -1 &&
 				this.turnProgress !== 0) ||
-			this.turnProgress !== this.turnProgressLag
+			Math.abs(this.turnProgress - this.turnProgressLag) > 0.001
 		);
 	}
 
-	public setTurnProgress(turnProgress: number) {
-		if (turnProgress === this.turnProgress) return;
+	public setTurnProgress(turnProgress: number, immediate: boolean = false) {
+		if (turnProgress === this.turnProgress && !immediate) return;
 
-		if (!this.bendingEnabled) {
+		if (!this.bendingEnabled || immediate) {
 			const delta = turnProgress - this.turnProgress;
-			this.turnProgressLag += delta;
+			this.turnProgressLag = immediate ? turnProgress : this.turnProgressLag + delta;
 		}
 
 		this.turnProgress = turnProgress;

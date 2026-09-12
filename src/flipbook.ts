@@ -674,10 +674,12 @@ export default class Flipbook {
 			this.wrapperLinkEl.setAttribute("target", "_blank");
 			this.wrapperLinkEl.setAttribute("rel", "noopener noreferrer");
 			this.wrapperLinkEl.removeAttribute("role");
+			this.wrapperLinkEl.setAttribute("aria-label", title || "Interactive Link");
 		} else {
 			this.wrapperLinkEl.removeAttribute("href");
 			this.wrapperLinkEl.removeAttribute("target");
-			this.wrapperLinkEl.setAttribute("role", "presentation");
+			this.wrapperLinkEl.setAttribute("role", "region");
+			this.wrapperLinkEl.setAttribute("aria-label", "Interactive 3D Book");
 		}
 	}
 
@@ -1464,6 +1466,11 @@ export default class Flipbook {
 			this.progress.setMin(-Infinity);
 			this.progress.setMax(Infinity);
 			this.progress.release();
+			this.pages.forEach((page, index) => {
+				const tp = index === 0 ? -1 : 1;
+				page.setTurnProgress(tp, true);
+				page.update(1);
+			});
 			this.update(1);
 			this.updateCursor();
 			this.introPhase = "COMPLETED";

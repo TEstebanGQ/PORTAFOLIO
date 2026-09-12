@@ -1,4 +1,3 @@
-import "./style.css";
 import Flipbook from "./flipbook";
 import initChaptersNav from "./chapters-nav";
 import { Language } from "./i18n";
@@ -318,8 +317,15 @@ function init() {
 	});
 }
 
+function start() {
+	// Yield to the browser so the logo, overlay, and initial frame are painted first
+	requestAnimationFrame(() => {
+		setTimeout(init, 0);
+	});
+}
+
 if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", init);
+	document.addEventListener("DOMContentLoaded", start);
 } else {
-	init();
+	start();
 }
