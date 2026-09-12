@@ -8,9 +8,7 @@ import {
 	toggleVisibility,
 } from "./util";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import Stats from "stats.js";
 import Page from "./page";
-import * as dat from "dat.gui";
 import SlidingNumber, { ValueChangeEvent } from "./sliding-number";
 import SwipeHandler from "./swipe-handler";
 import IntroOverlay from "./intro-overlay";
@@ -71,8 +69,8 @@ export default class Flipbook {
 	private spineZ: number;
 
 	private controls: OrbitControls;
-	private stats;
-	private datGui: dat.GUI;
+	private stats: any;
+	private datGui: any;
 
 	private spotLightHelper: THREE.SpotLightHelper | null = null;
 	private spotShadowHelper: THREE.CameraHelper | null = null;
@@ -437,63 +435,69 @@ export default class Flipbook {
 		this.applySettings(params.settings || {}, true);
 
 		if (import.meta.env.DEV) {
-			// Add fps counter
-			this.stats = new Stats();
-			this.stats.showPanel(0);
-			this.stats.dom.style.display = "none";
-			document.body.appendChild(this.stats.dom);
+			// Dynamic import: Stats + dat.GUI are never bundled in production
+			(async () => {
+				const [{ default: Stats }, dat] = await Promise.all([
+					import("stats.js"),
+					import("dat.gui"),
+				]);
 
-			this.datGui = new dat.GUI();
-			this.datGui.domElement.style.display = "none";
+				this.stats = new Stats();
+				this.stats.showPanel(0);
+				this.stats.dom.style.display = "none";
+				document.body.appendChild(this.stats.dom);
 
-			const cameraFolder = this.datGui.addFolder("Camera");
-			cameraFolder.open();
-			cameraFolder.add(
-				this.settings,
-				"cameraAngle",
-				Math.PI / -2,
-				Math.PI / 2,
-			);
-			cameraFolder.add(this.settings, "cameraDistance", 0, 2);
-			cameraFolder.add(this.settings, "cameraFov", 1, 90);
+				this.datGui = new dat.GUI();
+				this.datGui.domElement.style.display = "none";
 
-			const spotLightFolder = this.datGui.addFolder("Spot Light");
-			const spotLightPosFolder = spotLightFolder.addFolder("Position");
-			spotLightPosFolder.add(this.settings, "spotLightX", -1000, 1000);
-			spotLightPosFolder.add(this.settings, "spotLightY", -1000, 1000);
-			spotLightPosFolder.add(this.settings, "spotLightZ", 0, 2000);
-			spotLightFolder.addColor(this.settings, "spotLightColor");
-			spotLightFolder.add(this.settings, "spotLightIntensity", 0, 10000000);
-			spotLightFolder.add(this.settings, "spotLightAngle", 0, Math.PI);
-			spotLightFolder.add(this.settings, "spotLightPenumbra", 0, 1);
-			spotLightFolder.add(this.settings, "spotLightDecay", 0, 10);
-			spotLightFolder.add(this.settings, "spotLightNearClip", 1, 4000);
-			spotLightFolder.add(this.settings, "spotLightFarClip", 1, 4000);
-			spotLightFolder.add(this.settings, "spotLightMapSize", 0, 4096);
+				const cameraFolder = this.datGui.addFolder("Camera");
+				cameraFolder.open();
+				cameraFolder.add(
+					this.settings,
+					"cameraAngle",
+					Math.PI / -2,
+					Math.PI / 2,
+				);
+				cameraFolder.add(this.settings, "cameraDistance", 0, 2);
+				cameraFolder.add(this.settings, "cameraFov", 1, 90);
 
-			const ambientLightFolder = this.datGui.addFolder("Ambient Light");
-			ambientLightFolder.addColor(this.settings, "ambientLightColor");
-			ambientLightFolder.add(this.settings, "ambientLightIntensity", 0, 1);
+				const spotLightFolder = this.datGui.addFolder("Spot Light");
+				const spotLightPosFolder = spotLightFolder.addFolder("Position");
+				spotLightPosFolder.add(this.settings, "spotLightX", -1000, 1000);
+				spotLightPosFolder.add(this.settings, "spotLightY", -1000, 1000);
+				spotLightPosFolder.add(this.settings, "spotLightZ", 0, 2000);
+				spotLightFolder.addColor(this.settings, "spotLightColor");
+				spotLightFolder.add(this.settings, "spotLightIntensity", 0, 10000000);
+				spotLightFolder.add(this.settings, "spotLightAngle", 0, Math.PI);
+				spotLightFolder.add(this.settings, "spotLightPenumbra", 0, 1);
+				spotLightFolder.add(this.settings, "spotLightDecay", 0, 10);
+				spotLightFolder.add(this.settings, "spotLightNearClip", 1, 4000);
+				spotLightFolder.add(this.settings, "spotLightFarClip", 1, 4000);
+				spotLightFolder.add(this.settings, "spotLightMapSize", 0, 4096);
 
-			const helpersFolder = this.datGui.addFolder("Helpers");
-			helpersFolder.add(this.settings, "showSpotLightHelper");
-			helpersFolder.add(this.settings, "showSpotShadowHelper");
-			helpersFolder.add(this.settings, "showPageCurveHelpers");
+				const ambientLightFolder = this.datGui.addFolder("Ambient Light");
+				ambientLightFolder.addColor(this.settings, "ambientLightColor");
+				ambientLightFolder.add(this.settings, "ambientLightIntensity", 0, 1);
 
-			const addChangeListeners = (gui: dat.GUI): void => {
-				gui.__controllers.forEach((controller: dat.GUIController) => {
-					controller.onChange((value: any) => {
-						this.applySettings({ [controller.property]: value });
+				const helpersFolder = this.datGui.addFolder("Helpers");
+				helpersFolder.add(this.settings, "showSpotLightHelper");
+				helpersFolder.add(this.settings, "showSpotShadowHelper");
+				helpersFolder.add(this.settings, "showPageCurveHelpers");
+
+				const addChangeListeners = (gui: any): void => {
+					gui.__controllers.forEach((controller: any) => {
+						controller.onChange((value: any) => {
+							this.applySettings({ [controller.property]: value });
+						});
 					});
-				});
-
-				for (const folderName in gui.__folders) {
-					if (gui.__folders.hasOwnProperty(folderName)) {
-						addChangeListeners(gui.__folders[folderName]);
+					for (const folderName in gui.__folders) {
+						if (gui.__folders.hasOwnProperty(folderName)) {
+							addChangeListeners(gui.__folders[folderName]);
+						}
 					}
-				}
-			};
-			addChangeListeners(this.datGui);
+				};
+				addChangeListeners(this.datGui);
+			})();
 		}
 
 		// event listeners
@@ -1407,29 +1411,25 @@ export default class Flipbook {
 			const phase2Duration = durationMs * 0.3;
 			const phase3Duration = durationMs * 0.25;
 
-			// Phase 1: Increase shininess to max
-			logoEl.style.transition = `filter ${phase1Duration}ms ease-out`;
-			logoEl.style.filter =
-				"drop-shadow(0 0 10px white) drop-shadow(0 0 20px white) drop-shadow(0 0 40px white)";
+			// Phase 1: Fade in glow via opacity (compositable, no filter paint)
+			logoEl.style.transition = `opacity ${phase1Duration}ms ease-out`;
+			logoEl.style.opacity = "1";
 
-			logoShineEl.style.transition = `opacity ${phase1Duration / 2}ms ease-out ${phase1Duration / 2}ms, filter ${phase1Duration}ms ease-out ${phase1Duration / 2}ms, transform ${phase1Duration}ms ease-out ${phase1Duration / 2}ms`;
-			logoShineEl.style.filter = "brightness(2)";
+			logoShineEl.style.transition = `opacity ${phase1Duration / 2}ms ease-out ${phase1Duration / 2}ms, transform ${phase1Duration}ms ease-out ${phase1Duration / 2}ms`;
 			logoShineEl.style.opacity = "0.075";
 			logoShineEl.style.transform =
 				"translateX(-50%) translateY(-50%) scale(1.2)";
 
 			await sleep(phase1Duration);
 
-			// Phase 2: Maintain maximum shininess
+			// Phase 2: Hold
 			await sleep(phase2Duration);
 
-			// Phase 3: Decrease shininess and opacity
-			logoEl.style.transition = `filter ${phase3Duration}ms ease-in, opacity ${phase3Duration}ms ease-in`;
-			logoEl.style.filter = "none";
+			// Phase 3: Fade out via opacity only
+			logoEl.style.transition = `opacity ${phase3Duration}ms ease-in`;
 			logoEl.style.opacity = "0";
 
-			logoShineEl.style.transition = `opacity ${phase3Duration / 2}ms ease-in-out, filter ${phase3Duration / 2}ms ease-in-out, transform ${phase3Duration / 2}ms ease-in-out`;
-			logoShineEl.style.filter = "brightness(1)";
+			logoShineEl.style.transition = `opacity ${phase3Duration / 2}ms ease-in-out, transform ${phase3Duration / 2}ms ease-in-out`;
 			logoShineEl.style.opacity = "0";
 			logoShineEl.style.transform =
 				"translateX(-50%) translateY(-50%) scale(1)";
@@ -1842,16 +1842,22 @@ export default class Flipbook {
 	}
 
 	private startBackgroundPreload(): void {
+		// On mobile: no background preload at all.
+		// Pages are loaded on-demand via ensurePageLoaded() when the user turns them.
+		if (this.isMobile) return;
+
 		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
-		let index = 2; // Pages 0 and 1 are already loaded on startup
+		let index = 2;
+		// Desktop: preload next 5 pages only (avoid preloading the whole book at once)
+		const limit = Math.min(totalPages, index + 5);
 
 		const preloadNext = () => {
-			if (index >= totalPages) return;
+			if (index >= limit) return;
 			const p = index++;
 			if (!this.loadedPageIndices.has(p)) {
 				this.ensurePageLoaded(p).finally(() => {
 					if ("requestIdleCallback" in window) {
-						window.requestIdleCallback(preloadNext);
+						window.requestIdleCallback(preloadNext, { timeout: 2000 });
 					} else {
 						setTimeout(preloadNext, 400);
 					}
@@ -1862,7 +1868,7 @@ export default class Flipbook {
 		};
 
 		if ("requestIdleCallback" in window) {
-			window.requestIdleCallback(preloadNext);
+			window.requestIdleCallback(preloadNext, { timeout: 2000 });
 		} else {
 			setTimeout(preloadNext, 1500);
 		}
