@@ -1465,33 +1465,6 @@ export default class Flipbook {
 		const spotLightIntensity = this.spotLight.intensity;
 		const ambientLightIntensity = this.ambientLight.intensity;
 
-		if (this.isMobile) {
-			// Instantaneous, smooth mobile transition: 0 long tasks, 0 TBT
-			this.spotLight.intensity = spotLightIntensity;
-			this.ambientLight.intensity = ambientLightIntensity;
-			this.restoreCamera(0);
-			this.progress.setValue(1);
-			this.progress.setMin(-Infinity);
-			this.progress.setMax(Infinity);
-			this.progress.release();
-			this.pages.forEach((page, index) => {
-				const tp = index === 0 ? -1 : 1;
-				page.setTurnProgress(tp, true);
-				page.update(1);
-			});
-			this.update(1);
-			this.updateCursor();
-			this.introPhase = "COMPLETED";
-			this.isDirty = false;
-			if (this.introOverlay?.dom?.container) {
-				this.introOverlay.dom.container.style.transition = "opacity 300ms ease-out";
-				this.introOverlay.dom.container.style.opacity = "0";
-				this.introOverlay.dom.container.style.pointerEvents = "none";
-			}
-			this.onIntroCompleteCallbacks.forEach(cb => cb());
-			return;
-		}
-
 		this.spotLight.intensity = 0;
 		this.ambientLight.intensity = 0;
 
@@ -1533,16 +1506,18 @@ export default class Flipbook {
 
 		this.introOverlay.dom.progress.style.opacity = "0";
 
-		await sleep(200); // make sure all the hard work is done
-
 		try {
-			animateLightFlash(2500);
-			await animateLogoFlash(2500);
-			transitionToBottomView(3000);
-			await sleep(2000);
-			openFirstPage(3500);
-			await sleep(1000);
-			await transitionRaise(4000);
+			const flashDuration = this.isMobile ? 800 : 1200;
+			const animDuration = this.isMobile ? 1000 : 1600;
+
+			animateLightFlash(flashDuration);
+			await animateLogoFlash(flashDuration);
+
+			transitionToBottomView(animDuration * 0.7);
+			await sleep(animDuration * 0.35);
+			openFirstPage(animDuration);
+			await sleep(animDuration * 0.25);
+			await transitionRaise(animDuration * 0.8);
 		} finally {
 			this.spotLight.intensity = spotLightIntensity;
 			this.ambientLight.intensity = ambientLightIntensity;
@@ -1552,7 +1527,9 @@ export default class Flipbook {
 			}
 			this.updateCursor();
 			this.introPhase = "COMPLETED";
+			this.isDirty = false;
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
+			this.startBackgroundPreload();
 		}
 	}
 
@@ -1572,9 +1549,23 @@ export default class Flipbook {
 			this.progress.release();
 		}
 		this.restoreCamera(0);
+		this.update(1);
 		this.updateCursor();
-		this.requestRender();
+		this.isDirty = false;
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
+		this.startBackgroundPreload();
+	}
+
+	public getContainerEl(): HTMLElement {
+		return this.containerEl;
+	}
+
+	public getProgress(): number {
+		return this.progress.getValue();
+	}
+
+	public onProgressChange(callback: (progress: number) => void): void {
+		this.onProgressChangeCallbacks.push(callback);
 	}
 
 	public onIntroCompleted(callback: () => void): void {
@@ -1585,26 +1576,17 @@ export default class Flipbook {
 		}
 	}
 
-	public onProgressChange(callback: (progress: number) => void): void {
-		this.onProgressChangeCallbacks.push(callback);
-	}
-
-	public getProgress(): number {
-		return this.progress.getValue();
-	}
-
-	public getContainerEl(): HTMLElement {
-		return this.containerEl;
+	public getPageCount(): number {
+		return this.pages.length;
 	}
 
 	public async goToPage(targetProgress: number): Promise<void> {
 		if (this.introPhase === "LOADING") return;
 
 		const targetPage = Math.round(targetProgress);
-		await Promise.all([
-			this.ensurePageLoaded(targetPage),
-			this.ensurePageLoaded(targetPage + 1),
-		]);
+		// Asynchronously preload target pages without blocking the 3D page turn
+		this.ensurePageLoaded(targetPage);
+		this.ensurePageLoaded(targetPage + 1);
 
 		if (this.introPhase === "ANIMATING") {
 			if (this.introOverlay?.dom?.container) {
@@ -1702,7 +1684,7 @@ export default class Flipbook {
 
 		urls.forEach(url => {
 			if (!url || this.textureCache.has(url)) return;
-			this.textureLoader.load(url, (loadedTex) => {
+			this.bgTextureLoader.load(url, (loadedTex) => {
 				loadedTex.colorSpace = THREE.SRGBColorSpace;
 				if (this.isMobile) {
 					loadedTex.generateMipmaps = false;
@@ -1716,28 +1698,51 @@ export default class Flipbook {
 					loadedTex.anisotropy = maxAnisotropy;
 				}
 				loadedTex.needsUpdate = true;
-				if (this.renderer) {
-					try {
-						this.renderer.initTexture(loadedTex);
-					} catch (e) {
-						// Renderer may not be ready, ignore
-					}
-				}
 				this.textureCache.set(url, loadedTex);
 			});
 		});
 	}
 
-	private loadTextureAsync(url: string): Promise<THREE.Texture> {
-		return new Promise(resolve => {
-			if (this.textureCache.has(url)) {
-				resolve(this.textureCache.get(url)!);
-				return;
-			}
-			const maxAnisotropy = this.isMobile
-				? 1
-				: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 8, 8);
+	private async loadTextureAsync(url: string): Promise<THREE.Texture> {
+		if (this.textureCache.has(url)) {
+			return this.textureCache.get(url)!;
+		}
 
+		const maxAnisotropy = this.isMobile
+			? 1
+			: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 8, 8);
+
+		// Modern off-main-thread ImageBitmap decoding
+		if (typeof window.createImageBitmap === "function") {
+			try {
+				const response = await fetch(url);
+				const blob = await response.blob();
+				const bitmap = await createImageBitmap(blob, {
+					imageOrientation: "flipY",
+					premultiplyAlpha: "none",
+				});
+				const texture = new THREE.Texture(bitmap);
+				texture.colorSpace = THREE.SRGBColorSpace;
+				if (this.isMobile) {
+					texture.generateMipmaps = false;
+					texture.minFilter = THREE.LinearFilter;
+					texture.magFilter = THREE.LinearFilter;
+					texture.anisotropy = 1;
+				} else {
+					texture.generateMipmaps = true;
+					texture.minFilter = THREE.LinearMipmapLinearFilter;
+					texture.magFilter = THREE.LinearFilter;
+					texture.anisotropy = maxAnisotropy;
+				}
+				texture.needsUpdate = true;
+				this.textureCache.set(url, texture);
+				return texture;
+			} catch (_) {
+				// Fallback to standard loader
+			}
+		}
+
+		return new Promise(resolve => {
 			this.bgTextureLoader.load(
 				url,
 				(loadedTex: THREE.Texture) => {
@@ -1755,11 +1760,6 @@ export default class Flipbook {
 					}
 					loadedTex.needsUpdate = true;
 					this.textureCache.set(url, loadedTex);
-					if (this.renderer) {
-						try {
-							this.renderer.initTexture(loadedTex);
-						} catch (_) {}
-					}
 					resolve(loadedTex);
 				},
 				undefined,
@@ -1796,7 +1796,7 @@ export default class Flipbook {
 					backTex || backUrl,
 				);
 				this.loadedPageIndices.add(pageIndex);
-				this.render();
+				this.requestRender();
 			}
 		} finally {
 			this.loadingPageIndices.delete(pageIndex);
@@ -1814,6 +1814,33 @@ export default class Flipbook {
 					this.ensurePageLoaded(nextPageIndex);
 				}
 			}
-		}, this.isMobile ? 4000 : 800);
+		}, this.isMobile ? 3000 : 800);
+	}
+
+	private startBackgroundPreload(): void {
+		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
+		let index = 2; // Pages 0 and 1 are already loaded on startup
+
+		const preloadNext = () => {
+			if (index >= totalPages) return;
+			const p = index++;
+			if (!this.loadedPageIndices.has(p)) {
+				this.ensurePageLoaded(p).finally(() => {
+					if ("requestIdleCallback" in window) {
+						window.requestIdleCallback(preloadNext, { timeout: 2500 });
+					} else {
+						setTimeout(preloadNext, 400);
+					}
+				});
+			} else {
+				preloadNext();
+			}
+		};
+
+		if ("requestIdleCallback" in window) {
+			window.requestIdleCallback(preloadNext, { timeout: 3000 });
+		} else {
+			setTimeout(preloadNext, 1500);
+		}
 	}
 }

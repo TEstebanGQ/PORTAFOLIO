@@ -199,6 +199,10 @@ export class ChaptersNav {
 			btn.addEventListener("click", () => {
 				this.onChapterClick(ch.page);
 			});
+			btn.addEventListener("pointerenter", () => {
+				this.flipbook.ensurePageLoaded(ch.page);
+				this.flipbook.ensurePageLoaded(ch.page + 1);
+			});
 			this.chapterButtons.set(ch.id, btn);
 			list.appendChild(btn);
 		});
