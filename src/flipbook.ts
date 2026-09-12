@@ -1529,7 +1529,7 @@ export default class Flipbook {
 			this.introPhase = "COMPLETED";
 			this.isDirty = false;
 			this.onIntroCompleteCallbacks.forEach(cb => cb());
-			this.startBackgroundPreload();
+			setTimeout(() => this.startBackgroundPreload(), 4000);
 		}
 	}
 
@@ -1553,7 +1553,7 @@ export default class Flipbook {
 		this.updateCursor();
 		this.isDirty = false;
 		this.onIntroCompleteCallbacks.forEach(cb => cb());
-		this.startBackgroundPreload();
+		setTimeout(() => this.startBackgroundPreload(), 4000);
 	}
 
 	public getContainerEl(): HTMLElement {
@@ -1827,7 +1827,7 @@ export default class Flipbook {
 			if (!this.loadedPageIndices.has(p)) {
 				this.ensurePageLoaded(p).finally(() => {
 					if ("requestIdleCallback" in window) {
-						window.requestIdleCallback(preloadNext, { timeout: 2500 });
+						window.requestIdleCallback(preloadNext);
 					} else {
 						setTimeout(preloadNext, 400);
 					}
@@ -1838,7 +1838,7 @@ export default class Flipbook {
 		};
 
 		if ("requestIdleCallback" in window) {
-			window.requestIdleCallback(preloadNext, { timeout: 3000 });
+			window.requestIdleCallback(preloadNext);
 		} else {
 			setTimeout(preloadNext, 1500);
 		}
