@@ -375,7 +375,7 @@ export default class Page {
 					backMat.map = resolvedBack;
 					backMat.needsUpdate = true;
 				} else {
-					this.textureLoader.load(resolvedBack, (loadedTex) => {
+					this.textureLoader.load(resolvedBack, (loadedTex: THREE.Texture) => {
 						applyTextureSettings(loadedTex);
 						if (this.textureCache) {
 							this.textureCache.set(resolvedBack, loadedTex);
@@ -397,7 +397,7 @@ export default class Page {
 					frontMat.map = resolvedFront;
 					frontMat.needsUpdate = true;
 				} else {
-					this.textureLoader.load(resolvedFront, (loadedTex) => {
+					this.textureLoader.load(resolvedFront, (loadedTex: THREE.Texture) => {
 						applyTextureSettings(loadedTex);
 						if (this.textureCache) {
 							this.textureCache.set(resolvedFront, loadedTex);

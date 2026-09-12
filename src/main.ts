@@ -296,6 +296,7 @@ function init() {
 			spineEdgeTB: _url("/img/pages/spine-edge-tb.jpg"),
 			spineEdgeLR: _url("/img/pages/cover-edge-tb.jpg"),
 			desk: _url("/img/desk.jpg"),
+			blank: _url(initialLang === "en" ? "/img/pages-en/blank.jpg" : "/img/pages/blank.jpg"),
 		},
 		pageEdgeColor: 0xb1a283,
 		pageWidth,

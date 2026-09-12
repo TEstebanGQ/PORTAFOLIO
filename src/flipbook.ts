@@ -98,6 +98,12 @@ export default class Flipbook {
 	private onIntroCompleteCallbacks: (() => void)[] = [];
 	private onProgressChangeCallbacks: ((progress: number) => void)[] = [];
 
+	private loadedPageIndices: Set<number> = new Set();
+	private loadingPageIndices: Set<number> = new Set();
+	private bgTextureLoader: THREE.TextureLoader = new THREE.TextureLoader(
+		new THREE.LoadingManager(),
+	);
+
 	constructor(params: FlipBookParams) {
 		this.containerEl = params.containerEl;
 		this.pageWidth = params.pageWidth;
@@ -134,6 +140,7 @@ export default class Flipbook {
 			introStarted = true;
 			this.introOverlay.onProgress(1);
 			this.playIntro();
+			this.loadRemainingPagesInBackground();
 		};
 
 		const skipIntro = () => {
@@ -175,7 +182,7 @@ export default class Flipbook {
 				console.warn("Loading timeout reached; starting intro");
 				startIntroOnce();
 			}
-		}, this.isMobile ? 2500 : 4000);
+		}, this.isMobile ? 1800 : 2500);
 
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(
@@ -238,6 +245,11 @@ export default class Flipbook {
 
 		// add pages
 		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
+		const blankPlaceholderUrl =
+			this.textureUrls.blank ||
+			this.textureUrls.pages.find(p => p.includes("blank")) ||
+			this.textureUrls.pages[0];
+
 		for (let i = 0; i < totalPages; i++) {
 			const isCover = i === 0 || i === totalPages - 1;
 			const width = isCover
@@ -253,10 +265,25 @@ export default class Flipbook {
 				edgeTextures.edgeTB = this.textureUrls.coverEdgeTB;
 			}
 
+			// Progressive loading: Only critically visible pages load synchronously
+			// Page 0 (Front cover & Welcome), Page 1 (About & Who am I), and Page 15 back (Cover back)
+			let frontUrl = this.textureUrls.pages[i * 2];
+			let backUrl = this.textureUrls.pages[i * 2 + 1];
+
+			if (i > 1 && i < totalPages - 1) {
+				frontUrl = blankPlaceholderUrl;
+				backUrl = blankPlaceholderUrl;
+			} else if (i === totalPages - 1) {
+				// Last page: back cover is critical, front (the-book) can load deferred
+				frontUrl = blankPlaceholderUrl;
+			} else {
+				this.loadedPageIndices.add(i);
+			}
+
 			const page = new Page({
 				textureUrls: {
-					front: this.textureUrls.pages[i * 2],
-					back: this.textureUrls.pages[i * 2 + 1],
+					front: frontUrl,
+					back: backUrl,
 					...edgeTextures,
 				},
 				width,
@@ -565,6 +592,10 @@ export default class Flipbook {
 			"valueChange",
 			({ newValue: progress }: ValueChangeEvent) => {
 				this.onProgressChangeCallbacks.forEach(cb => cb(progress));
+				const current = Math.round(progress);
+				this.ensurePageLoaded(current);
+				this.ensurePageLoaded(current + 1);
+				this.ensurePageLoaded(current - 1);
 				if (this.isVerticalMode) {
 					if (this.isTurning()) {
 						const tp = progress - this.getTurningPage()!;
@@ -1474,6 +1505,11 @@ export default class Flipbook {
 	public async goToPage(targetProgress: number): Promise<void> {
 		if (this.introPhase === "LOADING") return;
 
+		const targetPage = Math.round(targetProgress);
+		this.ensurePageLoaded(targetPage);
+		this.ensurePageLoaded(targetPage + 1);
+		this.ensurePageLoaded(targetPage - 1);
+
 		if (this.introPhase === "ANIMATING") {
 			this.introOverlay.dom.container.style.display = "none";
 			this.updateCursor();
@@ -1589,5 +1625,87 @@ export default class Flipbook {
 				this.textureCache.set(url, loadedTex);
 			});
 		});
+	}
+
+	private loadTextureAsync(url: string): Promise<THREE.Texture> {
+		return new Promise(resolve => {
+			if (this.textureCache.has(url)) {
+				resolve(this.textureCache.get(url)!);
+				return;
+			}
+			const maxAnisotropy = this.isMobile
+				? 1
+				: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 8, 8);
+
+			this.bgTextureLoader.load(
+				url,
+				(loadedTex: THREE.Texture) => {
+					loadedTex.colorSpace = THREE.SRGBColorSpace;
+					if (this.isMobile) {
+						loadedTex.generateMipmaps = false;
+						loadedTex.minFilter = THREE.LinearFilter;
+						loadedTex.magFilter = THREE.LinearFilter;
+						loadedTex.anisotropy = 1;
+					} else {
+						loadedTex.generateMipmaps = true;
+						loadedTex.minFilter = THREE.LinearMipmapLinearFilter;
+						loadedTex.magFilter = THREE.LinearFilter;
+						loadedTex.anisotropy = maxAnisotropy;
+					}
+					loadedTex.needsUpdate = true;
+					this.textureCache.set(url, loadedTex);
+					if (this.renderer) {
+						try {
+							this.renderer.initTexture(loadedTex);
+						} catch (_) {}
+					}
+					resolve(loadedTex);
+				},
+				undefined,
+				() => {
+					resolve(new THREE.Texture());
+				},
+			);
+		});
+	}
+
+	public async ensurePageLoaded(pageIndex: number): Promise<void> {
+		if (
+			pageIndex < 0 ||
+			pageIndex >= this.pages.length ||
+			this.loadedPageIndices.has(pageIndex) ||
+			this.loadingPageIndices.has(pageIndex)
+		) {
+			return;
+		}
+
+		this.loadingPageIndices.add(pageIndex);
+		const frontUrl = this.textureUrls.pages[pageIndex * 2];
+		const backUrl = this.textureUrls.pages[pageIndex * 2 + 1];
+
+		try {
+			const [frontTex, backTex] = await Promise.all([
+				frontUrl ? this.loadTextureAsync(frontUrl) : Promise.resolve(null),
+				backUrl ? this.loadTextureAsync(backUrl) : Promise.resolve(null),
+			]);
+
+			if (this.pages[pageIndex]) {
+				this.pages[pageIndex].updateTextures(
+					frontTex || frontUrl,
+					backTex || backUrl,
+				);
+				this.loadedPageIndices.add(pageIndex);
+				this.render();
+			}
+		} finally {
+			this.loadingPageIndices.delete(pageIndex);
+		}
+	}
+
+	private async loadRemainingPagesInBackground(): Promise<void> {
+		const totalPages = this.pages.length;
+		for (let i = 2; i < totalPages; i++) {
+			await this.ensurePageLoaded(i);
+		}
 	}
 }

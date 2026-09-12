@@ -18,6 +18,7 @@ type FlipBookParams = {
 		spineEdgeTB: string;
 		spineEdgeLR: string;
 		desk: string;
+		blank?: string;
 	};
 	settings?: Partial<FlipbookSettings>;
 	pageActiveAreas?: PageActiveArea[];
