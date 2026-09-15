@@ -1,19 +1,20 @@
-# The Book of Tomás Esteban — Full Stack Developer & Architect Portfolio
+# The Book of Tomás Esteban — Junior Full Stack Developer Portfolio
 
-> Tomás Esteban González Quintero (TEGQ) is a Full Stack Developer and Systems Architect based in Bucaramanga, Colombia. Specializing in high-performance web systems, .NET 8, React Native, Three.js 3D WebGL, Supabase, n8n AI agent workflows, and distributed architectures.
+> Tomás Esteban González Quintero (TEGQ) es Desarrollador Junior Full Stack de Bucaramanga, Colombia. Con experiencia práctica en JavaScript, Node.js, C# .NET, Java, Spring Boot, React Native, Supabase y flujos de automatización con IA (n8n, MCP). Proyección estratégica a futuro en Análisis de Datos, Ingeniería de IA y Ciberseguridad.
 
 ## Official Links
 
-- [Official Portfolio Website](https://portafolio.tomasestebangonzalezquintero.workers.dev/)
+- [Official Portfolio Website](https://portafolio-tegq-web.netlify.app/)
 - [GitHub Profile](https://github.com/TEstebanGQ)
 - [LinkedIn Profile](https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/)
 - [WhatsApp Contact](https://wa.me/573167755887)
 
-## Featured Projects
+## Featured Production & Engineering Projects
 
-- [Campuslands Inteligente](https://github.com/TEstebanGQ/campuslands-inteligente): Intelligent campus automation system.
-- [LogiTrack WMS](https://github.com/TEstebanGQ/logitrack-wms-springboot): Enterprise Warehouse Management System built with Spring Boot.
-- [n8n Attendance AI Workflow](https://github.com/TEstebanGQ/n8n-attendance-ai-workflow): Automated facial recognition and AI attendance tracking.
-- [GitHub MCP Server](https://github.com/TEstebanGQ/github-mcp-server): Model Context Protocol server for seamless GitHub interactions.
-- [HelpDesk AI](https://github.com/TEstebanGQ/HelpDeskAI): Automated AI-powered IT ticketing and help desk system.
-- [3D Interactive Portfolio](https://github.com/TEstebanGQ/PORTAFOLIO): High-performance Three.js WebGL 3D book portfolio.
+- [Campuslands Access Hub](https://github.com/TEstebanGQ/Campus-Hub-zero): Sistema en producción para cientos de participantes con asistencia biométrica en tiempo real, gestión de grupos, certificados digitales automáticos y control de acceso basado en roles (RBAC).
+- [Enterprise Security API](https://github.com/TEstebanGQ/dotnet-hexagonal-enterprise-security-api): API REST empresarial en .NET 9 bajo Arquitectura Hexagonal con análisis de seguridad OWASP para contraseñas, autenticación JWT blindada, cifrado BCrypt y Rate Limiting.
+- [Campuslands Inteligente](https://github.com/TEstebanGQ/campuslands-inteligente): Plataforma multi-agente con LangGraph, PyTorch (visión computacional), FastAPI y PostgreSQL.
+- [LogiTrack WMS](https://github.com/TEstebanGQ/logitrack-wms-springboot): Sistema WMS de gestión logística de almacenes y bodegas con Spring Boot 3, JPA/Hibernate, MySQL y Docker.
+- [n8n Attendance AI Workflow](https://github.com/TEstebanGQ/n8n-attendance-ai-workflow): Pipeline automatizado para recepción, clasificación inteligente de justificaciones con LLMs (OpenRouter), Google Sheets y Telegram Bot.
+- [GitHub MCP Server](https://github.com/TEstebanGQ/github-mcp-server): Servidor Model Context Protocol (MCP) en Node.js que conecta agentes de IA con la API de GitHub mediante herramientas estandarizadas.
+- [eCommerce Database 4NF](https://github.com/TEstebanGQ/ecommerce-database-4nf): Arquitectura de base de datos relacional avanzada en MySQL normalizada en 4NF con triggers transaccionales y análisis RFM para segmentación de clientes.

@@ -32,12 +32,12 @@ export default class Flipbook {
 		cameraDistance: 1.02,
 		cameraFov: 14,
 
-		spotLightX: 250,
-		spotLightY: 500,
+		spotLightX: 0,
+		spotLightY: 550,
 		spotLightZ: 1500,
 		spotLightColor: 0xffffff,
-		spotLightIntensity: 60,
-		spotLightAngle: 0.7,
+		spotLightIntensity: 65,
+		spotLightAngle: 0.75,
 		spotLightPenumbra: 0.6,
 		spotLightDecay: 0.4,
 		spotLightNearClip: 500,
@@ -45,7 +45,7 @@ export default class Flipbook {
 		spotLightMapSize: 2048,
 
 		ambientLightColor: 0xffffff,
-		ambientLightIntensity: 0.35,
+		ambientLightIntensity: 0.42,
 
 		showSpotLightHelper: false,
 		showSpotShadowHelper: false,
@@ -186,12 +186,21 @@ export default class Flipbook {
 			}
 		}, this.isMobile ? 1800 : 2500);
 
+		const initialAspect = window.innerWidth / window.innerHeight;
+		let initialFov = this.settings.cameraFov;
+		if (initialAspect < 1.0) {
+			const targetHFOVRads = THREE.MathUtils.degToRad(25);
+			const tanHalfHFOV = Math.tan(targetHFOVRads / 2);
+			const requiredFovY = 2 * Math.atan(tanHalfHFOV / initialAspect) * (180 / Math.PI);
+			initialFov = Math.min(Math.max(requiredFovY, this.settings.cameraFov), 75);
+		}
+
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(
-			this.settings.cameraFov,
-			window.innerWidth / window.innerHeight,
-			1200,
-			9000,
+			initialFov,
+			initialAspect,
+			50,
+			60000,
 		);
 
 		this.renderer = new THREE.WebGLRenderer({
@@ -202,7 +211,7 @@ export default class Flipbook {
 		// this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		// this.renderer.toneMappingExposure = 1.2;
 		this.renderer.setPixelRatio(
-			Math.min(window.devicePixelRatio, this.isMobile ? 1 : 1.5),
+			Math.min(window.devicePixelRatio, this.isMobile ? 1 : 2),
 		);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.renderer.shadowMap.enabled = !this.isMobile;
@@ -244,14 +253,10 @@ export default class Flipbook {
 
 		const maxAnisotropy = this.isMobile
 			? 1
-			: Math.min(this.renderer.capabilities.getMaxAnisotropy(), 8);
+			: Math.min(this.renderer.capabilities.getMaxAnisotropy(), 16);
 
 		// add pages
 		const totalPages = Math.ceil(this.textureUrls.pages.length / 2);
-		const blankPlaceholderUrl =
-			this.textureUrls.blank ||
-			this.textureUrls.pages.find(p => p.includes("blank")) ||
-			this.textureUrls.pages[0];
 
 		for (let i = 0; i < totalPages; i++) {
 			const isCover = i === 0 || i === totalPages - 1;
@@ -268,20 +273,10 @@ export default class Flipbook {
 				edgeTextures.edgeTB = this.textureUrls.coverEdgeTB;
 			}
 
-			// Progressive loading: Only critically visible pages load synchronously
-			// Page 0 (Front cover & Welcome), Page 1 (About & Who am I), and Page 15 back (Cover back)
-			let frontUrl = this.textureUrls.pages[i * 2];
-			let backUrl = this.textureUrls.pages[i * 2 + 1];
-
-			if (i > 1 && i < totalPages - 1) {
-				frontUrl = blankPlaceholderUrl;
-				backUrl = blankPlaceholderUrl;
-			} else if (i === totalPages - 1) {
-				// Last page: back cover is critical, front (the-book) can load deferred
-				frontUrl = blankPlaceholderUrl;
-			} else {
-				this.loadedPageIndices.add(i);
-			}
+			// All pages receive their authentic textures directly
+			const frontUrl = this.textureUrls.pages[i * 2];
+			const backUrl = this.textureUrls.pages[i * 2 + 1];
+			this.loadedPageIndices.add(i);
 
 			const page = new Page({
 				textureUrls: {
@@ -302,6 +297,7 @@ export default class Flipbook {
 				maxAnisotropy,
 				isMobile: this.isMobile,
 				textureCache: this.textureCache,
+				onTextureLoaded: () => this.requestRender(),
 			});
 			this.pages.push(page);
 		}
@@ -404,7 +400,7 @@ export default class Flipbook {
 		});
 
 		// create desk
-		const deskGeometry = new THREE.PlaneGeometry(5216, 1956, 1, 1);
+		const deskGeometry = new THREE.PlaneGeometry(8000, 8000, 1, 1);
 		const deskTexture = this.textureLoader.load(this.textureUrls.desk);
 		deskTexture.colorSpace = THREE.SRGBColorSpace;
 		if (this.isMobile) {
@@ -613,28 +609,17 @@ export default class Flipbook {
 				this.onProgressChangeCallbacks.forEach(cb => cb(progress));
 				const current = Math.round(progress);
 				this.schedulePredictivePreload(current);
-				if (this.isVerticalMode) {
-					if (this.isTurning()) {
-						const tp = progress - this.getTurningPage()!;
-						this.cameraSideShift.setValue((1 - tp) * 2 - 1);
-					} else {
-						this.cameraSideShift.setValue(
-							Math.round(this.cameraSideShift.getValue()),
-						);
-					}
-				} else {
-					const bookOpenFactor = Math.min(
-						progress,
-						this.pages.length - progress,
-						1,
-					);
+				const bookOpenFactor = Math.min(
+					progress,
+					this.pages.length - progress,
+					1,
+				);
 
-					this.cameraSideShift.setValue(1 - bookOpenFactor);
-					if (progress + 1 > this.pages.length) {
-						this.cameraSideShift.setValue(
-							-this.cameraSideShift.getValue(),
-						);
-					}
+				this.cameraSideShift.setValue(1 - bookOpenFactor);
+				if (progress + 1 > this.pages.length) {
+					this.cameraSideShift.setValue(
+						-this.cameraSideShift.getValue(),
+					);
 				}
 				this.requestRender();
 			},
@@ -790,51 +775,30 @@ export default class Flipbook {
 		if (!deltaX) return;
 		const progressDelta = this.swipeDeltaToProgress(deltaX);
 
-		if (!this.cameraSideShift.locked && !this.progress.locked) {
-			// start either a shift or a turn
-			if (
-				this.isVerticalMode &&
-				!this.isTurning() &&
-				(this.isShifting() ||
-					(this.cameraSideShift.getValue() === -1 &&
-						progressDelta > 0 &&
-						this.progress.getValue() < this.pages.length) ||
-					(this.cameraSideShift.getValue() === 1 &&
-						progressDelta < 0 &&
-						this.progress.getValue() > 0))
-			) {
-				// starting a shift
-				this.cameraSideShift.lock();
+		if (!this.progress.locked) {
+			// starting a turn directly
+			this.progress.lock();
+
+			if (progressDelta > 0) {
+				this.progress.setMin(this.progress.getValue());
+				this.progress.setMax(this.progress.getValue() + 1);
 			} else {
-				// starting a turn
-				this.progress.lock();
-				this.cameraSideShift.lock();
+				this.progress.setMin(this.progress.getValue() - 1);
+				this.progress.setMax(this.progress.getValue());
+			}
 
-				if (progressDelta > 0) {
-					this.progress.setMin(this.progress.getValue());
-					this.progress.setMax(this.progress.getValue() + 1);
-				} else {
-					this.progress.setMin(this.progress.getValue() - 1);
-					this.progress.setMax(this.progress.getValue());
-				}
-
-				// handling book beginning and ending
-				if (this.progress.minValue < 0) {
-					this.progress.setMin(0);
-					this.progress.setMax(1);
-				} else if (this.progress.maxValue > this.pages.length) {
-					this.progress.setMin(this.pages.length - 1);
-					this.progress.setMax(this.pages.length);
-				}
+			// handling book beginning and ending
+			if (this.progress.minValue < 0) {
+				this.progress.setMin(0);
+				this.progress.setMax(1);
+			} else if (this.progress.maxValue > this.pages.length) {
+				this.progress.setMin(this.pages.length - 1);
+				this.progress.setMax(this.pages.length);
 			}
 		}
 
 		if (this.isTurning()) {
 			this.progress.nudge(progressDelta);
-		}
-
-		if (this.isShifting()) {
-			this.cameraSideShift.nudge(progressDelta * 2);
 		}
 	}
 
@@ -932,22 +896,33 @@ export default class Flipbook {
 	}
 
 	private updateVerticalMode() {
-		const bookAspect = (this.pageWidth * 2) / this.pageHeight;
 		const screenAspect = window.innerWidth / window.innerHeight;
-		// TODO: tweak the breakpoint
-		this.isVerticalMode = bookAspect > screenAspect;
-		if (this.isVerticalMode) {
-			this.cameraSideShift.gravity = this.CAMERA_SIDE_GRAVITY;
-		} else {
-			this.cameraSideShift.gravity = 0;
-		}
+		this.isVerticalMode = screenAspect < 1.0;
+		this.cameraSideShift.gravity = 0;
 	}
 
 	private onWindowResize() {
 		this.updateVerticalMode();
-		this.camera.aspect = window.innerWidth / window.innerHeight;
+		const aspect = window.innerWidth / window.innerHeight;
+		this.camera.aspect = aspect;
+
+		if (aspect < 1.0) {
+			const targetHFOVRads = THREE.MathUtils.degToRad(25);
+			const tanHalfHFOV = Math.tan(targetHFOVRads / 2);
+			const requiredFovY = 2 * Math.atan(tanHalfHFOV / aspect) * (180 / Math.PI);
+			this.camera.fov = Math.min(Math.max(requiredFovY, this.settings.cameraFov), 75);
+		} else {
+			this.camera.fov = this.settings.cameraFov;
+		}
+
 		this.camera.updateProjectionMatrix();
+		this.renderer.setPixelRatio(
+			Math.min(window.devicePixelRatio, this.isMobile ? 1 : 2),
+		);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		if (this.introPhase === "COMPLETED" && !this.focusedActiveArea) {
+			this.restoreCamera(0);
+		}
 		this.render();
 	}
 
@@ -1136,10 +1111,20 @@ export default class Flipbook {
 	) {
 		const targetPos = this.getCameraPos(corners);
 
-		let restFinishAt = 1;
-		if (preset === "page-zoom" || preset === "page-unzoom") {
-			// all properties except z finish transition at 73% of animation
-			restFinishAt = 0.73;
+		if (duration === 0) {
+			this.camera.position.set(
+				targetPos.position.x,
+				targetPos.position.y,
+				targetPos.position.z,
+			);
+			this.camera.quaternion.set(
+				targetPos.rotation.x,
+				targetPos.rotation.y,
+				targetPos.rotation.z,
+				targetPos.rotation.w,
+			);
+			this.render();
+			return;
 		}
 
 		let [zDuration, restDuration, restDelay] = [0, 0, 0];
@@ -1246,9 +1231,12 @@ export default class Flipbook {
 
 	public getBaseViewRect(
 		overrideSettings: null | Partial<FlipbookSettings> = null,
+		overrideProgress?: number,
+		overrideSideShift?: number,
 	) {
-		const pw = this.pageWidth;
-		const ph = this.pageHeight;
+		const totalMarginX = this.coverMarginX + this.coverThickness;
+		const pw = this.pageWidth + totalMarginX;
+		const ph = this.pageHeight + this.coverMarginY * 2;
 		const yShift = -ph * 0.011; // 1.1% down
 
 		const cornerTL = new THREE.Vector3(-pw, ph / 2 + yShift, 0);
@@ -1260,30 +1248,32 @@ export default class Flipbook {
 
 		// applying transformations to the corners
 		if (this.isVerticalMode) {
+			// In portrait mode, provide comfortable padding so the full book fits elegantly
 			corners.forEach(point => {
-				point.x *= 0.6;
+				point.x *= 1.15;
+				point.y *= 1.15;
 			});
 		}
 
-		// TODO: getBookOpenFactor
-		const bookOpenFactor = Math.min(
-			this.progress.getValue(),
-			this.pages.length - this.progress.getValue(),
-			1,
-		);
-		// compensate spine width to make book centered when it's closed
-		// TODO: it should depend on spineWidth
-		const sideShiftMultiplier = 1 + (1 - bookOpenFactor) * 0.105;
+		const progressVal =
+			overrideProgress !== undefined
+				? overrideProgress
+				: this.progress.getValue();
 
-		if (this.cameraSideShift) {
-			corners.forEach(point => {
-				point.x +=
-					(this.pageWidth *
-						this.cameraSideShift.getValue() *
-						sideShiftMultiplier) /
-					2;
-			});
+		// Center the book accurately based on progress:
+		// At progress = 0 (closed front cover): shift +pageWidth/2 so front cover is centered.
+		// At progress >= 1 and <= pages.length - 1 (open book): shift 0 so the 2-page spread is exactly centered!
+		// At progress = pages.length (closed back cover): shift -pageWidth/2 so back cover is centered.
+		let centerOffset = 0;
+		if (progressVal < 1) {
+			centerOffset = ((this.pageWidth + this.coverMarginX) / 2) * (1 - progressVal);
+		} else if (progressVal > this.pages.length - 1) {
+			centerOffset = (-(this.pageWidth + this.coverMarginX) / 2) * (progressVal - (this.pages.length - 1));
 		}
+
+		corners.forEach(point => {
+			point.x += centerOffset;
+		});
 
 		// rotate the target rectangle
 		const cameraAngle =
@@ -1326,6 +1316,30 @@ export default class Flipbook {
 				// handle active area click
 				const area = this.getActiveAreaAt(sceneMousePos);
 
+				if (area?.link) {
+					const href =
+						typeof area.link === "function" ? area.link() : area.link;
+					if (href) {
+						if (
+							href.endsWith(".pdf") ||
+							area.title?.toLowerCase().includes("pdf") ||
+							area.title?.toLowerCase().includes("hoja de vida") ||
+							area.title?.toLowerCase().includes("resume")
+						) {
+							const downloadLink = document.createElement("a");
+							downloadLink.href = href;
+							downloadLink.download = "Tomas_Esteban_Gonzalez_Quintero_CV.pdf";
+							downloadLink.target = "_blank";
+							document.body.appendChild(downloadLink);
+							downloadLink.click();
+							downloadLink.remove();
+						} else {
+							window.open(href, "_blank", "noopener,noreferrer");
+						}
+						return;
+					}
+				}
+
 				if (area?.zoom) {
 					this.focusActiveArea(area, 1.05);
 				}
@@ -1347,7 +1361,11 @@ export default class Flipbook {
 
 	private async playIntro() {
 		const transitionToBottomView = async (durationMs: number) => {
-			const bottomViewRect = this.getBaseViewRect(bottomViewSettings);
+			const bottomViewRect = this.getBaseViewRect(
+				bottomViewSettings,
+				0,
+				1,
+			);
 			const target = this.getCameraPos(bottomViewRect);
 			const dur = durationMs / 1000;
 			const pTween = gsap.to(this.camera.position, {
@@ -1385,13 +1403,21 @@ export default class Flipbook {
 					this.progress.setMin(-Infinity);
 					this.progress.setMax(Infinity);
 					this.progress.release();
+					if (!this.isVerticalMode) {
+						this.cameraSideShift.setValue(0);
+					}
 				},
 			});
 		};
 
 		const transitionRaise = async (durationMs: number) => {
 			const originalSettings = { ...this.settings };
-			const target = this.getCameraPos(this.getBaseViewRect(originalSettings));
+			const openRect = this.getBaseViewRect(
+				originalSettings,
+				1,
+				this.isVerticalMode ? -1 : 0,
+			);
+			const target = this.getCameraPos(openRect);
 			const dur = durationMs / 1000;
 			const pTween = gsap.to(this.camera.position, {
 				x: target.position.x,
@@ -1532,11 +1558,11 @@ export default class Flipbook {
 			animateLightFlash(flashDuration);
 			await animateLogoFlash(flashDuration);
 
-			transitionToBottomView(animDuration * 0.7);
-			await sleep(animDuration * 0.35);
-			openFirstPage(animDuration);
-			await sleep(animDuration * 0.25);
-			await transitionRaise(animDuration * 0.8);
+			await transitionToBottomView(animDuration * 0.65);
+			const openPromise = openFirstPage(animDuration);
+			await sleep(animDuration * 0.15);
+			const raisePromise = transitionRaise(animDuration * 0.85);
+			await Promise.all([openPromise, raisePromise]);
 		} finally {
 			this.spotLight.intensity = spotLightIntensity;
 			this.ambientLight.intensity = ambientLightIntensity;
@@ -1564,17 +1590,26 @@ export default class Flipbook {
 	public finishIntroImmediately(): void {
 		if (this.introPhase === "COMPLETED") return;
 		this.introPhase = "COMPLETED";
+
+		gsap.killTweensOf(this.camera.position);
+		gsap.killTweensOf(this.camera.quaternion);
+		gsap.killTweensOf(this.spotLight);
+		gsap.killTweensOf(this.ambientLight);
+
 		this.spotLight.intensity = this.settings.spotLightIntensity;
 		this.ambientLight.intensity = this.settings.ambientLightIntensity;
 		if (this.introOverlay?.dom?.container) {
 			this.introOverlay.dom.container.style.opacity = "0";
 			this.introOverlay.dom.container.style.pointerEvents = "none";
 		}
-		if (this.progress.getValue() === 0) {
-			this.progress.setValue(1);
-			this.progress.setMin(-Infinity);
-			this.progress.setMax(Infinity);
-			this.progress.release();
+		this.progress.setValue(1);
+		this.progress.setMin(-Infinity);
+		this.progress.setMax(Infinity);
+		this.progress.release();
+		if (!this.isVerticalMode) {
+			this.cameraSideShift.setValue(0);
+		} else {
+			this.cameraSideShift.setValue(-1);
 		}
 		this.restoreCamera(0);
 		this.update(1);
@@ -1611,6 +1646,10 @@ export default class Flipbook {
 		} else {
 			this.onIntroCompleteCallbacks.push(callback);
 		}
+	}
+
+	public getIntroPhase(): "LOADING" | "ANIMATING" | "COMPLETED" {
+		return this.introPhase;
 	}
 
 	public getPageCount(): number {
@@ -1702,16 +1741,21 @@ export default class Flipbook {
 
 	public updatePageTextures(pageUrls: string[]): void {
 		const totalPages = Math.ceil(pageUrls.length / 2);
+		this.textureUrls.pages = pageUrls;
 		for (let i = 0; i < totalPages; i++) {
 			const frontUrl = pageUrls[i * 2];
 			const backUrl = pageUrls[i * 2 + 1];
 			if (this.pages[i] && frontUrl && backUrl) {
 				const frontTex = this.textureCache.get(frontUrl);
 				const backTex = this.textureCache.get(backUrl);
-				this.pages[i].updateTextures(frontTex || frontUrl, backTex || backUrl);
+				this.pages[i].updateTextures(
+					frontTex || frontUrl,
+					backTex || backUrl,
+					() => this.requestRender(),
+				);
 			}
 		}
-		this.render();
+		this.requestRender();
 	}
 
 	public preloadTextures(urls: string[]): void {
@@ -1747,7 +1791,7 @@ export default class Flipbook {
 
 		const maxAnisotropy = this.isMobile
 			? 1
-			: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 8, 8);
+			: Math.min(this.renderer?.capabilities?.getMaxAnisotropy() || 16, 16);
 
 		// Modern off-main-thread ImageBitmap decoding
 		if (typeof window.createImageBitmap === "function") {
@@ -1845,6 +1889,7 @@ export default class Flipbook {
 				this.pages[pageIndex].updateTextures(
 					frontTex || frontUrl,
 					backTex || backUrl,
+					() => this.requestRender(),
 				);
 				this.loadedPageIndices.add(pageIndex);
 				this.requestRender();

@@ -34,6 +34,7 @@ export default class Page {
 	private maxAnisotropy: number;
 	private isMobile: boolean;
 	private textureCache?: Map<string, THREE.Texture>;
+	private onTextureLoaded?: () => void;
 	private static readonly _v0 = new THREE.Vector2();
 	private static readonly _v1 = new THREE.Vector2();
 	private static readonly _v2 = new THREE.Vector2();
@@ -69,6 +70,7 @@ export default class Page {
 		this.maxAnisotropy = pageParams.maxAnisotropy;
 		this.isMobile = pageParams.isMobile;
 		this.textureCache = pageParams.textureCache;
+		this.onTextureLoaded = pageParams.onTextureLoaded;
 
 		if (this.isCover) {
 			this.zSegments = 1;
@@ -83,7 +85,10 @@ export default class Page {
 				const cached = this.textureCache.get(url)!;
 				return { map: cached, vertexColors: !this.isCover };
 			}
-			const texture = this.textureLoader.load(url);
+			const texture = this.textureLoader.load(url, () => {
+				texture.needsUpdate = true;
+				this.onTextureLoaded?.();
+			});
 			texture.colorSpace = THREE.SRGBColorSpace;
 			if (this.isMobile) {
 				texture.generateMipmaps = false;
@@ -394,8 +399,9 @@ export default class Page {
 	}
 
 	public updateTextures(
-		front: string | THREE.Texture,
-		back: string | THREE.Texture,
+		front?: string | THREE.Texture,
+		back?: string | THREE.Texture,
+		onComplete?: () => void,
 	) {
 		const applyTextureSettings = (texture: THREE.Texture) => {
 			texture.colorSpace = THREE.SRGBColorSpace;
@@ -427,6 +433,8 @@ export default class Page {
 					applyTextureSettings(resolvedBack);
 					backMat.map = resolvedBack;
 					backMat.needsUpdate = true;
+					onComplete?.();
+					this.onTextureLoaded?.();
 				} else {
 					this.textureLoader.load(resolvedBack, (loadedTex: THREE.Texture) => {
 						applyTextureSettings(loadedTex);
@@ -435,6 +443,8 @@ export default class Page {
 						}
 						backMat.map = loadedTex;
 						backMat.needsUpdate = true;
+						onComplete?.();
+						this.onTextureLoaded?.();
 					});
 				}
 			}
@@ -449,6 +459,8 @@ export default class Page {
 					applyTextureSettings(resolvedFront);
 					frontMat.map = resolvedFront;
 					frontMat.needsUpdate = true;
+					onComplete?.();
+					this.onTextureLoaded?.();
 				} else {
 					this.textureLoader.load(resolvedFront, (loadedTex: THREE.Texture) => {
 						applyTextureSettings(loadedTex);
@@ -457,6 +469,8 @@ export default class Page {
 						}
 						frontMat.map = loadedTex;
 						frontMat.needsUpdate = true;
+						onComplete?.();
+						this.onTextureLoaded?.();
 					});
 				}
 			}

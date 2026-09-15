@@ -1,6 +1,7 @@
 import Flipbook from "./flipbook";
-import initChaptersNav from "./chapters-nav";
+import initChaptersNav, { ChaptersNav } from "./chapters-nav";
 import { Language } from "./i18n";
+import { MobileView } from "./mobile-view";
 
 declare global {
 	interface Window {
@@ -176,30 +177,115 @@ function getActiveAreas(lang: Language, pageWidth: number, pageHeight: number) {
 		},
 		{
 			faceIndex: 29,
-			link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-			top: 240.0 / pageHeight,
-			left: 115.0 / pageWidth,
-			width: 110.0 / pageWidth,
-			height: 28.0 / pageHeight,
-			title: isEn ? "GitHub - 3D Portfolio" : "GitHub - Portafolio 3D",
+			link: "https://github.com/TEstebanGQ/dotnet-hexagonal-enterprise-security-api",
+			top: 235.0 / pageHeight,
+			left: 114.5 / pageWidth,
+			width: 175.0 / pageWidth,
+			height: 30.0 / pageHeight,
+			title: isEn ? "GitHub - Enterprise Security API" : "GitHub - Enterprise Security API (.NET 9)",
+		},
+		{
+			faceIndex: 29,
+			link: "/Tomas_Esteban_Gonzalez_Quintero_CV.pdf",
+			top: 235.0 / pageHeight,
+			left: 310.0 / pageWidth,
+			width: 195.0 / pageWidth,
+			height: 30.0 / pageHeight,
+			title: isEn ? "Download Resume (PDF)" : "Descargar Hoja de Vida (PDF)",
 		},
 		{
 			faceIndex: 30,
-			link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-			top: 232.5 / pageHeight,
-			left: 115.0 / pageWidth,
-			width: 110.0 / pageWidth,
-			height: 28.0 / pageHeight,
-			title: isEn ? "GitHub - Official Repository" : "GitHub - Repositorio Oficial",
+			link: "https://github.com/TEstebanGQ/Campus-Hub-zero",
+			top: 235.0 / pageHeight,
+			left: 114.5 / pageWidth,
+			width: 215.0 / pageWidth,
+			height: 30.0 / pageHeight,
+			title: isEn ? "GitHub - Campuslands Access Hub" : "GitHub - Campuslands Access Hub (Producción)",
 		},
 		{
 			faceIndex: 30,
-			link: "https://github.com/TEstebanGQ/PORTAFOLIO",
-			top: 232.5 / pageHeight,
-			left: 250.0 / pageWidth,
-			width: 185.0 / pageWidth,
-			height: 28.0 / pageHeight,
-			title: isEn ? "Official Repository" : "Repositorio Oficial",
+			link: "/Tomas_Esteban_Gonzalez_Quintero_CV.pdf",
+			top: 235.0 / pageHeight,
+			left: 350.0 / pageWidth,
+			width: 195.0 / pageWidth,
+			height: 30.0 / pageHeight,
+			title: isEn ? "Download Resume (PDF)" : "Descargar Hoja de Vida (PDF)",
+		},
+		{
+			faceIndex: 30,
+			link: isEn
+				? "https://wa.me/573167755887?text=Hello%20Tom%C3%A1s,%20I'm%20contacting%20you%20from%20your%20portfolio%20website"
+				: "https://wa.me/573167755887?text=Hola%20Tom%C3%A1s,%20te%20contacto%20desde%20tu%20portafolio%20web",
+			top: 980.0 / pageHeight,
+			left: 120.0 / pageWidth,
+			width: 190.0 / pageWidth,
+			height: 25.0 / pageHeight,
+			title: "WhatsApp: +57 316 775 5887",
+		},
+		{
+			faceIndex: 30,
+			link: "https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/",
+			top: 980.0 / pageHeight,
+			left: 325.0 / pageWidth,
+			width: 90.0 / pageWidth,
+			height: 25.0 / pageHeight,
+			title: "LinkedIn - Tomás Esteban",
+		},
+		{
+			faceIndex: 30,
+			link: "mailto:tomasestebangonzalezquintero@gmail.com",
+			top: 980.0 / pageHeight,
+			left: 430.0 / pageWidth,
+			width: 200.0 / pageWidth,
+			height: 25.0 / pageHeight,
+			title: "Email: tomasestebangonzalezquintero@gmail.com",
+		},
+		{
+			faceIndex: 30,
+			link: "/Tomas_Esteban_Gonzalez_Quintero_CV.pdf",
+			top: 1005.0 / pageHeight,
+			left: 80.0 / pageWidth,
+			width: 604.0 / pageWidth,
+			height: 35.0 / pageHeight,
+			title: isEn ? "Download Official Resume (PDF)" : "Descargar Hoja de Vida Oficial (PDF)",
+		},
+		{
+			faceIndex: 31,
+			link: "https://github.com/TEstebanGQ",
+			top: 1540 / 2200,
+			left: 472 / 1544,
+			width: 600 / 1544,
+			height: 48 / 2200,
+			title: "GitHub - TEstebanGQ",
+		},
+		{
+			faceIndex: 31,
+			link: "https://www.linkedin.com/in/tomas-esteban-gonzalez-quintero/",
+			top: 1595 / 2200,
+			left: 432 / 1544,
+			width: 680 / 1544,
+			height: 48 / 2200,
+			title: "LinkedIn - Tomás Esteban",
+		},
+		{
+			faceIndex: 31,
+			link: isEn
+				? "https://wa.me/573167755887?text=Hello%20Tom%C3%A1s,%20I'm%20contacting%20you%20from%20your%20portfolio%20website"
+				: "https://wa.me/573167755887?text=Hola%20Tom%C3%A1s,%20te%20contacto%20desde%20tu%20portafolio%20web",
+			top: 1650 / 2200,
+			left: 482 / 1544,
+			width: 580 / 1544,
+			height: 48 / 2200,
+			title: isEn ? "WhatsApp Contact" : "Contacto WhatsApp",
+		},
+		{
+			faceIndex: 31,
+			link: "/Tomas_Esteban_Gonzalez_Quintero_CV.pdf",
+			top: 1730 / 2200,
+			left: 390 / 1544,
+			width: 764 / 1544,
+			height: 105 / 2200,
+			title: isEn ? "Download Official Resume (PDF)" : "Descargar Hoja de Vida Oficial (PDF)",
 		},
 		{
 			faceIndex: 5,
@@ -302,20 +388,84 @@ function init() {
 		pageHeight,
 		coverThickness: 5,
 		pageRootThickness: 5,
-		pageThickness: 1,
-		coverMarginX: 8,
+		pageThickness: 1.5,
+		coverMarginX: 12,
 		coverMarginY: 10,
 		pageActiveAreas: getActiveAreas(initialLang, pageWidth, pageHeight),
 	});
 
+	const isMobileDevice = (): boolean => {
+		const ua = navigator.userAgent || "";
+		const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+		const hasTouch = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || ("ontouchstart" in window);
+		const isSmallScreen = window.innerWidth <= 820;
+		return isSmallScreen || (isMobileUA && window.innerWidth <= 1024) || (hasTouch && isSmallScreen);
+	};
+
+	let nav: ChaptersNav | null = null;
+	let userToggled3D = false;
+	const shouldStartMobile = isMobileDevice();
+
+	const onSwitchTo3D = () => {
+		userToggled3D = true;
+		sessionStorage.setItem("portfolio_view_mode", "3d");
+		mobileView.hide();
+		if (window.flipbook.getIntroPhase() !== "COMPLETED") {
+			window.flipbook.finishIntroImmediately();
+		} else {
+			window.flipbook.restoreCamera(0);
+		}
+	};
+
+	const onSwitchToMobile = () => {
+		userToggled3D = false;
+		sessionStorage.setItem("portfolio_view_mode", "mobile");
+		mobileView.show();
+	};
+
+	const onLanguageChanged = (newLang: Language) => {
+		initialLang = newLang;
+		localStorage.setItem("portfolio_lang", newLang);
+		const url = new URL(window.location.href);
+		url.searchParams.set("lang", newLang);
+		window.history.replaceState({}, "", url.toString());
+
+		mobileView.setLanguage(newLang);
+		window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
+		window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
+		if (nav) {
+			nav.applyLanguage(newLang);
+		}
+	};
+
+	const mobileView = new MobileView(
+		initialLang,
+		onSwitchTo3D,
+		onSwitchToMobile,
+		onLanguageChanged,
+	);
+
+	if (shouldStartMobile) {
+		mobileView.show();
+	}
+
 	window.flipbook.onIntroCompleted(() => {
 		setTimeout(() => {
-			const nav = initChaptersNav(window.flipbook);
+			nav = initChaptersNav(window.flipbook);
 			nav.onLanguageChange(newLang => {
-				window.flipbook.setActiveAreas(getActiveAreas(newLang, pageWidth, pageHeight));
-				window.flipbook.updatePageTextures(getPageTextureUrls(newLang, _url));
+				onLanguageChanged(newLang);
 			});
 		}, 100);
+	});
+
+	window.addEventListener("resize", () => {
+		const isNowMobile = isMobileDevice();
+		if (isNowMobile && !mobileView.getIsVisible() && !userToggled3D) {
+			mobileView.show();
+		} else if (!isNowMobile && mobileView.getIsVisible() && !sessionStorage.getItem("portfolio_view_mode")) {
+			onSwitchTo3D();
+		}
+		mobileView.updateSwitchBtnVisibility();
 	});
 }
 

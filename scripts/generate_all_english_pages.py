@@ -988,44 +988,44 @@ def generate_all_projects():
         "PLATFORM MODULES & USER CAPABILITIES", lms_features, lms_badges, "time-recorder.jpg"
     )
 
-    # 11. fifteen-js.jpg (Interactive 3D Codex)
-    f15_features = [
-        ("1. CYLINDRICAL DEFORMATION MATHEMATICS", "Custom vertex displacement algorithms modeling elastic sheet curvature, page stiffness, and natural spine curl.", 665),
-        ("2. GPU TEXTURE PRECOMPILATION", "Precompiled WebGL textures in GPU VRAM enabling instantaneous language transitions with zero black flashes.", 815),
-        ("3. INTERACTIVE RAYCASTING HOTSPOTS", "Real-time 3D coordinate unprojecting mapping screen cursor interactions to underlying page link seals and badges.", 965),
-        ("4. ADAPTIVE VIEWPORT PROJECTION", "Adaptive camera frustum recalculations adjusting zoom, angle, and lighting across mobile and desktop screens.", 1115)
+    # 11. fifteen-js.jpg (Enterprise Security API)
+    sec_features = [
+        ("1. OWASP PASSWORD VULNERABILITY ANALYSIS", "Heuristic entropy evaluation and strict OWASP compliance validation to eliminate dictionary and brute-force attack vectors.", 665),
+        ("2. HARDENED JWT AUTH & BCRYPT HASHING", "Secure identity management with cryptographically signed JWT tokens, secret rotation, and adaptive BCrypt salting.", 815),
+        ("3. DISTRIBUTED RATE LIMITING & DOS DEFENSE", "Granular per-IP and per-client throttling policies protecting critical authentication endpoints from flood attacks.", 965),
+        ("4. IMMUTABLE AUDIT LOGGING & TRACEABILITY", "Structured logging of authentication lifecycles, failed access attempts, and privilege elevations for forensics.", 1115)
     ]
-    f15_badges = [
-        ("GRAPHICS", "Three.js 0.172", "WebGL Engine"),
-        ("ANIMATION", "GSAP 3.12", "Physics Easing"),
-        ("LANGUAGE", "TypeScript 5.5", "Strict Safety"),
-        ("BUNDLER", "Vite 6", "Production HMR")
+    sec_badges = [
+        ("FRAMEWORK", "C# / .NET 9", "ASP.NET Core"),
+        ("ARCHITECTURE", "Hexagonal (Ports)", "Clean Architecture"),
+        ("SECURITY", "OWASP Compliant", "JWT & BCrypt"),
+        ("PROTECTION", "Rate Limiting", "Data Sanitization")
     ]
     generate_project_template(
-        "PORTFOLIO 3D CODEX", "THREE.JS ENGINE, MATHEMATICAL DEFORMATIONS & SHADERS",
-        "The engineering behind this interactive 3D codex: real-time GPU mesh deformations, cylindrical physics equations simulating paper flexibility, procedural leather texturing, and dynamic lighting pipelines.",
-        "Links: GitHub (Repository)  ·  Technical Architecture",
-        "GRAPHICAL & MATHEMATICAL FOUNDATIONS", f15_features, f15_badges, "fifteen-js.jpg"
+        "ENTERPRISE SECURITY API", "HEXAGONAL ARCHITECTURE & OWASP DEFENSIVE SECURITY IN .NET 9",
+        "High-security enterprise REST API designed under Hexagonal Architecture in .NET 9, featuring hardened JWT authentication, BCrypt password hashing, OWASP compliance analyzer, rate limiting, and client CRM.",
+        "Links: GitHub (Repository)  ·  OWASP Architecture",
+        "CYBERSECURITY MODULES & ACCESS CONTROL", sec_features, sec_badges, "fifteen-js.jpg"
     )
 
-    # 12. the-book.jpg (The Codex Architecture & Credits)
-    tb_features = [
-        ("1. 60 FPS HARDWARE ACCELERATION", "Smooth WebGL execution with FXAA antialiasing and soft dynamic shadow mapping across all viewports.", 665),
-        ("2. MULTI-INPUT NAVIGATION ENGINE", "Comprehensive gesture detection supporting drag turning, touch swipes, keyboard arrow keys, and chapter plaques.", 815),
-        ("3. PROCEDURAL PHYSICS & CURLING", "Parametric cylinder bending algorithms mathematically modeling real manuscript parchment flexibility and spine curvature.", 965),
-        ("4. ZERO-LATENCY I18N ARCHITECTURE", "Dual-language preloading architecture guaranteeing clean instant re-initialization from the cover with zero ghost artifacts.", 1115)
+    # 12. the-book.jpg (Campuslands Access Hub)
+    hub_features = [
+        ("1. REAL-TIME MULTI-TENANT ATTENDANCE", "Instant attendance verification and logging processing hundreds of daily check-ins with sub-second response times.", 665),
+        ("2. ROLE-BASED ACCESS CONTROL (RBAC)", "Granular permission hierarchy enforcing strict security boundaries across SuperAdmins, Coordinators, Trainers, and Campers.", 815),
+        ("3. AUTOMATED DIGITAL CERTIFICATES", "Automated generation and cryptographic verification of completion certificates featuring unique tamper-proof QR codes.", 965),
+        ("4. ANALYTIC METRICS & REPORTING DASHBOARD", "Interactive coordinator dashboard tracking retention rates, attendance anomalies, and structured data exports.", 1115)
     ]
-    tb_badges = [
-        ("AUTHOR", "Tomas Esteban", "Gonzalez Quintero"),
-        ("ROLE", "Full Stack Dev", "Software Architect"),
-        ("LOCATION", "Bucaramanga", "Colombia · 2026"),
-        ("MOTTO", "Clean Systems", "Tangible Rigor")
+    hub_badges = [
+        ("ENVIRONMENT", "Live Production", "Hundreds of Users"),
+        ("STACK", "TypeScript / Node", "PostgreSQL & Supabase"),
+        ("SECURITY", "Granular RBAC", "Signed JWT"),
+        ("OPERATION", "Real-Time Sync", "Digital QR Certs")
     ]
     generate_project_template(
-        "THE CODEX", "TECHNICAL ARCHITECTURE & AUTHORSHIP CREDITS",
-        "The Book of Tomas Esteban Gonzalez Quintero is an interactive 3D experience designed to present my trajectory, engineering projects, technical capabilities, and software architecture vision.",
-        "Links: Official Repository  ·  Live Deployment",
-        "MOTOR SPECIFICATIONS & ARCHITECTURE", tb_features, tb_badges, "the-book.jpg"
+        "CAMPUSLANDS ACCESS HUB", "PRODUCTION ACCESS CONTROL, ATTENDANCE & DIGITAL CERTIFICATES",
+        "Enterprise system deployed to production and actively used by hundreds of participants, featuring real-time attendance tracking, group management, automated digital certificate issuance, and role-based access control (RBAC).",
+        "Links: GitHub (Repository)  ·  Production Deployment",
+        "PRODUCTION OPERATIONAL CAPABILITIES", hub_features, hub_badges, "the-book.jpg"
     )
 
 def main():

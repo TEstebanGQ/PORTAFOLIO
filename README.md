@@ -3,7 +3,7 @@
 # 📖 El Libro de Tomás Esteban
 
 **Portafolio interactivo 3D de [Tomás Esteban González Quintero](https://github.com/TEstebanGQ)**  
-Full Stack Developer · AI Solutions Integrator · Arquitecto de Software  
+Desarrollador Junior Full Stack · Análisis de Datos · Ingeniería de IA · Ciberseguridad  
 📍 Bucaramanga, Santander, Colombia
 
 [![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat&logo=three.js&logoColor=white)](https://threejs.org/)
@@ -34,12 +34,12 @@ Una **bitácora técnica en 3D interactiva** que adapta el motor de físicas de 
 .
 ├── public/
 │   ├── img/
-│   │   ├── pages/          # Texturas de alta resolución de cada página (JPG, ~1528×2160)
-│   │   │   ├── cover-front.jpg   # Portada personalizada con logo TG dorado
-│   │   │   ├── who-am-i.jpg      # Perfil, bio, iconos de contacto (GitHub, WhatsApp, LinkedIn)
-│   │   │   ├── my-story.jpg      # Historia de formación en Campuslands
+│   │   ├── pages/          # Texturas de alta resolución de cada página (WebP/JPG, ~1528×2160)
+│   │   │   ├── cover-front.webp  # Portada personalizada con logo TG dorado
+│   │   │   ├── who-am-i.webp     # Perfil, bio, iconos de contacto (GitHub, WhatsApp, LinkedIn)
+│   │   │   ├── my-story.webp     # Historia de formación en Campuslands
 │   │   │   └── ...               # Proyectos, trayectoria, intereses, contraportada
-│   │   ├── desk.jpg              # Textura del escritorio (escena WebGL)
+│   │   ├── desk.webp             # Textura del escritorio (escena WebGL)
 │   │   └── logo.png              # Logo TG para pantalla de carga
 ├── src/
 │   ├── main.ts           # Punto de entrada: URLs de texturas y áreas interactivas
@@ -94,8 +94,7 @@ npm run preview
 | 6–7 | Intereses / Blanco | Ciberseguridad, Animación 3D y Análisis de Datos |
 | 8–11 | Capítulo II: Trayectoria | Mapa de ruta cronológico y evolución de aprendizaje |
 | 12–17 | Capítulo III: Experiencia | Campuslands (alto rendimiento, LogiTrack WMS, IA) y Consultoría & Freelance |
-| 18–29 | Capítulo IV: Proyectos | Fichas interactivas de proyectos con enlaces a repositorios y demos en vivo |
-| 30 | El Libro | Descripción y créditos del portafolio 3D |
+| 18–30 | Capítulo IV: Proyectos | Fichas interactivas de proyectos con enlaces a repositorios (incluye Campuslands Access Hub y Enterprise Security API) |
 | 31 | Contraportada | Archivo TEGQ y canales directos de contacto |
 
 ---
@@ -104,19 +103,21 @@ npm run preview
 
 | Proyecto | Descripción | Stack |
 |----------|-------------|-------|
+| 👥 [Campuslands Access Hub](https://github.com/TEstebanGQ/Campus-Hub-zero) | Sistema en producción para cientos de participantes con asistencia biométrica en tiempo real, gestión de grupos, certificados y RBAC | `TypeScript` `PostgreSQL` `Supabase` |
+| 🛡️ [dotnet-hexagonal-enterprise-security-api](https://github.com/TEstebanGQ/dotnet-hexagonal-enterprise-security-api) | API REST empresarial con Arquitectura Hexagonal, análisis OWASP, JWT, BCrypt y Rate Limiting | `C# .NET 9` `Hexagonal` `OWASP` |
 | 🧠 [campuslands-inteligente](https://github.com/TEstebanGQ/campuslands-inteligente) | Plataforma multi-agente con LangGraph, PyTorch y FastAPI | `Python` `LangGraph` `PyTorch` |
 | 📦 [logitrack-wms-springboot](https://github.com/TEstebanGQ/logitrack-wms-springboot) | Sistema WMS empresarial con Spring Boot y JPA | `Java 17` `Spring Boot` `MySQL` |
 | ⚙️ [n8n-attendance-ai-workflow](https://github.com/TEstebanGQ/n8n-attendance-ai-workflow) | Automatización de inasistencias con n8n + LLM | `n8n` `OpenRouter` `Telegram` |
 | 🔌 [github-mcp-server](https://github.com/TEstebanGQ/github-mcp-server) | Servidor MCP en Node.js para conectar LLMs con GitHub | `Node.js` `MCP Protocol` `Groq` |
-| 🎫 [HelpDeskAI](https://github.com/TEstebanGQ/HelpDeskAI) | Sistema de tickets asistido por IA y base de conocimientos | `JavaScript` `OpenRouter` `RAG` |
 | 🗄️ [ecommerce-database-4nf](https://github.com/TEstebanGQ/ecommerce-database-4nf) | Base de datos relacional en 4NF con triggers y análisis RFM | `MySQL` `4NF` `Stored Procedures` |
+| 🎫 [HelpDeskAI](https://github.com/TEstebanGQ/HelpDeskAI) | Sistema de tickets asistido por IA y base de conocimientos | `JavaScript` `OpenRouter` `RAG` |
 | 🕹️ [softskills-quest](https://github.com/TEstebanGQ/softskills-quest) | Videojuego 2D gamificado con Canvas y Web Audio API | `JavaScript` `Canvas 2D` |
 
 ---
 
 ## 👨‍💻 Autor
 
-**Tomas Esteban Gonzalez Quintero** — *Desarrollador Full Stack*
+**Tomas Esteban Gonzalez Quintero** — *Desarrollador Junior Full Stack*
 
 ---
 

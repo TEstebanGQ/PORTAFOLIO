@@ -89,7 +89,9 @@ export class ChaptersNav {
 		localStorage.setItem("portfolio_lang", lang);
 		const url = new URL(window.location.href);
 		url.searchParams.set("lang", lang);
-		window.location.href = url.toString();
+		window.history.replaceState({}, "", url.toString());
+		this.applyLanguage(lang, true);
+		this.onLangChangeCallbacks.forEach(cb => cb(lang));
 	}
 
 	private createLanguageSwitcher() {
@@ -143,7 +145,7 @@ export class ChaptersNav {
 		this.toggleBtn.className = "chapters-toggle-btn";
 		this.toggleBtn.setAttribute("aria-label", "Abrir índice de capítulos");
 		this.toggleBtn.innerHTML = `
-			<span class="toggle-icon">📜</span>
+			<span class="toggle-icon">✦</span>
 			<span class="toggle-text">Capítulos</span>
 		`;
 
@@ -211,7 +213,7 @@ export class ChaptersNav {
 		const divider2 = document.createElement("div");
 		divider2.className = "chapters-divider";
 
-		// Footer with Portada / Inicio option
+		// Footer with Portada / Inicio option and Download CV option
 		const footer = document.createElement("div");
 		footer.className = "chapters-footer";
 		const coverBtn = document.createElement("button");
@@ -226,6 +228,17 @@ export class ChaptersNav {
 			this.onChapterClick(0);
 		});
 		footer.appendChild(coverBtn);
+
+		const cvLink = document.createElement("a");
+		cvLink.href = "/Tomas_Esteban_Gonzalez_Quintero_CV.pdf";
+		cvLink.download = "Tomas_Esteban_Gonzalez_Quintero_CV.pdf";
+		cvLink.className = "chapter-cv-btn";
+		cvLink.title = "Descargar Hoja de Vida en PDF";
+		cvLink.innerHTML = `
+			<span class="cv-seal">✦</span>
+			<span class="cv-text">Descargar CV (PDF)</span>
+		`;
+		footer.appendChild(cvLink);
 
 		// Assemble
 		this.navEl.appendChild(cornerTL);
@@ -253,7 +266,7 @@ export class ChaptersNav {
 		mountTarget.appendChild(this.containerEl);
 	}
 
-	private applyLanguage(lang: Language, showToast = true) {
+	public applyLanguage(lang: Language, showToast = true) {
 		const texts = I18N_TEXTS[lang];
 
 		// Update HTML document metadata
@@ -292,6 +305,12 @@ export class ChaptersNav {
 			const coverBtn = this.navEl.querySelector<HTMLButtonElement>(".chapter-cover-btn");
 			if (coverBtnText) coverBtnText.textContent = texts.coverButton;
 			if (coverBtn) coverBtn.title = texts.coverTooltip;
+
+			// Update CV Download Button
+			const cvBtnText = this.navEl.querySelector<HTMLElement>(".cv-text");
+			const cvBtn = this.navEl.querySelector<HTMLAnchorElement>(".chapter-cv-btn");
+			if (cvBtnText) cvBtnText.textContent = texts.cvNavDownloadBtn;
+			if (cvBtn) cvBtn.title = texts.cvNavDownloadTooltip;
 		}
 
 		// Update Mobile Toggle Button
